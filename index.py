@@ -205,7 +205,7 @@ def pokus():
         ds = Dataset(label=key, data=data, color=color)
         datasets.append(ds)
 
-    return render_template('pokus.html', title=title, labels=labels, datasets=datasets)
+    return render_template('pokus.html', id=1, title=title, labels=labels, datasets=datasets)
 
 
 # @app.route('/cam')
