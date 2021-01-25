@@ -7,30 +7,16 @@
     <link rel="stylesheet" href="/static/css/Chart.min.css"	type="text/css">
     <script src="/static/js/Chart.min.js" type="text/javascript" />
 
-    <script>
-        function onLoad() {
-            alert('baf!');
-        }
-    </script>
+    <script></script> <!-- bez tohoto to kdovi proc vubec nejede -->
 </head>
-<body>
 
-<div style="height: 10vh; background-color:lightcyan;  margin-bottom: 20px;">
-    stuff ABOVE {{ test }}
-</div>
-<div class="chart-container" style="position: relative; width:96vw; display: flex; flex-wrap: wrap;">
-    <canvas id="chartCanvas" style="margin-left: 1vw;"></canvas>
-</div>
-<div style="background-color:lightcyan; margin-top: 20px;">
-    stuff BELOW
-    <button id="zoomReset">Reset zoom/pan</button>
-</div>
-
-<script type="module">
-    import ChartJSEnhancements from '/static/js/ChartJSEnhancements.min.js';
-
-    var ctx = document.getElementById('chartCanvas').getContext('2d');
-    var myChart = new Chart(ctx, {
+{% macro chart(id, title, labels, datasets) -%}
+    <div class="chart-container" style="position: relative; width:96vw; display: flex; flex-wrap: wrap;">
+        <canvas id="chartCanvas{{ id }}" style="margin-left: 1vw;"></canvas>
+    </div>
+    <script type="module">
+    var ctx{{ id }} = document.getElementById('chartCanvas{{ id }}').getContext('2d');
+    var myChart{{ id }} = new Chart(ctx{{ id }}, {
         type: 'line',
         data: {
             labels: [{{ labels|safe }}],
@@ -85,12 +71,18 @@
         },
 
     });
-
-    let enhancer = new ChartJSEnhancements(myChart);
-    enhancer.initialize();
-
-    document.getElementById('zoomReset').addEventListener('click', () => { enhancer.resetZoom(); });
     </script>
+{%- endmacro %}
+
+<body>
+
+<div style="height: 10vh; background-color:lightcyan;  margin-bottom: 20px;">
+    stuff ABOVE ID:{{ id }}
+</div>
+{{ chart(id, title, labels, datasets) }}
+<div style="background-color:lightcyan; margin-top: 20px;">
+    stuff BELOW
+</div>
 
 </body>
 </html>
