@@ -1,0 +1,26 @@
+<ul class="list-group">
+    <li class="list-group-item list-group-item-primary"><strong>Engine{% if engines|length > 1 %}s{% endif %}</strong>
+    </li>
+
+    {% for engine in engines %}
+    <a href="/engine/{{engine.id}}"
+       class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1"><strong>{{ engine.type }}</strong> on <strong>{{ engine.airplane.registration
+                }}</strong> as <strong>#{{ engine.engine_no }}</strong></h5>
+            <small class="text-muted">3 days ago</small>
+        </div>
+        {% if engine.numNotifications and engine.numNotifications['len'] > 0 %}
+        <p class="mb-1">type: {{ engine.type }} | serial number: {{ engine.serial_no }} | year of production: {{
+            engine.year_of_prod }} | installed on: {{ engine.installation_ts }} | removed on: {{ engine.removal_ts }} |
+            archived: {{ engine.archived }} | cycle hrs: {{ "%.1f"|format(engine.cycle_hours/3600) }} | cycle no: {{
+            engine.CYCLENo }} | cycle no TO: {{ engine.CYCLENoTO }}</p>
+        <small class="text-muted">Pending notifications:
+            {% if engine.numNotifications['info'] > 0 %}info <span class="badge badge-primary badge-pill" style="background-color:green;"> {{ engine.numNotifications['info'] }} </span>{% endif %}
+            {% if engine.numNotifications['warning'] > 0 %}warning <span class="badge badge-primary badge-pill" style="background-color:coral;">{{ engine.numNotifications['warning'] }}</span>{% endif %}
+            {% if engine.numNotifications['urgent'] > 0 %}urgent <span class="badge badge-primary badge-pill" style="background-color:crimson;">{{ engine.numNotifications['urgent'] }}</span>{% endif %}
+        </small>
+        {% endif %}
+    </a>
+    {% endfor %}
+</ul>

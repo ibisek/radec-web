@@ -1,0 +1,36 @@
+<ul class="list-group">
+    <a href="#"
+       class="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
+        <strong>Recent Notifications</strong>
+        <span class="badge badge-primary badge-pill" style="background-color:#084298;">666</span>
+    </a>
+</ul>
+<br>
+
+{% for notification in notifications %}
+{% if notification.type >= 3 and notification.type < 128 %}<div class="alert alert-warning" role="alert">
+{% elif notification.type >=128 %}<div class="alert alert-danger" role="alert">
+{% else %}<div class="alert alert-success" role="alert">{% endif %}
+    {% if notification.formattedDt%}{{ notification.formattedDt }} |{%endif%}
+    &nbsp;<strong>{{ notification.airplane.registration }}</strong> eng. <strong>#{{ notification.engine.engine_no }} ></strong>
+    {{ notification.message }}
+    <small class="text-muted"><a href="#" class="alert-link">more</a></small>
+</div>
+{% endfor %}
+
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <h5 class="alert-heading"> Today <strong>16:45</strong> | OK-VUT | Lycoming 540</h5>
+    NG = 0. Asi jste to zadreli, volove :P Vice informaci o pruseru <a href="#" class="alert-link">zde</a>.
+</div>
+<div class="alert alert-warning" role="alert">
+    <h5 class="alert-heading"> Today <strong>16:41</strong> | OK-VUT | Lycoming 540</h5>
+    <p>ITT > 1000 st.C, bacha, pridira se motor!! Aspon tomu trochu stahni!</p>
+    <hr>
+    <p class="mb-0">Check details of the flight and cycle <a href="#" class="alert-link">here</a>.</p>
+</div>
+<div class="alert alert-success" role="alert">
+    <h5 class="alert-heading"> Today <strong>14:10</strong> | OK-VUT | Lycoming 540</h5>
+    <p>Tlak oleje 0. Tlak paliva kolisa. Toto je zkontrolovana / odsouhlasena / zavrena notifikace</p>
+    <hr>
+    <p class="mb-0">Check details of the flight and cycle <a href="#" class="alert-link">here</a>.</p>
+</div>

@@ -1,0 +1,9 @@
+
+https://getbootstrap.com/docs/4.0/getting-started/introduction/
+
+https://www.chartjs.org/docs/latest/
+    https://www.chartjs.org/docs/2.7.2/notes/extensions.html
+
+    https://jjppof.github.io/chartjs-plugin-zoom-pan-select/example/index
+    https://github.com/jjppof/chartjs-plugin-zoom-pan-select/releases
+

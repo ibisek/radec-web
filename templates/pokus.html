@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>POKUSY</title>
+
+    <link rel="stylesheet" href="/static/css/Chart.min.css"	type="text/css">
+    <script src="/static/js/Chart.min.js" type="text/javascript" />
+
+    <script>
+        function onLoad() {
+            alert('baf!');
+        }
+    </script>
+</head>
+<body>
+
+<div style="height: 10vh; background-color:lightcyan;  margin-bottom: 20px;">
+    stuff ABOVE {{ test }}
+</div>
+<div class="chart-container" style="position: relative; width:96vw; display: flex; flex-wrap: wrap;">
+    <canvas id="chartCanvas" style="margin-left: 1vw;"></canvas>
+</div>
+<div style="background-color:lightcyan; margin-top: 20px;">
+    stuff BELOW
+    <button id="zoomReset">Reset zoom/pan</button>
+</div>
+
+<script type="module">
+    import ChartJSEnhancements from '/static/js/ChartJSEnhancements.min.js';
+
+    var ctx = document.getElementById('chartCanvas').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [{{ labels|safe }}],
+            datasets: [
+                {% for ds in datasets %}
+                {
+                yAxisID: '{{ ds.label }}',
+                label: '{{ ds.label }}',
+                data: [{{ ds.data }}],
+                borderColor: '{{ ds.color }}',
+                borderWidth: 2,
+                fill: false,
+                spanGaps: false,
+                lineTension: 0.1,
+                pointRadius: 0,
+                },
+                {% endfor %}
+            ]
+        },
+        options: {
+            responsive: true,
+            aspectRatio: 3,
+            scales: {
+                yAxes: [
+                    {% for ds in datasets %}
+                    {
+                    id: '{{ ds.label }}',
+                    scaleLabel: {
+                        display: true,
+                        labelString: '{{ ds.label }}',
+                    },
+                    type: 'linear',
+                    {% if loop.index == 1 %}position: 'left',{% else %}position: 'right',{% endif %}
+                    padding: 10,
+                    },
+                    {% endfor %}
+                ],
+            },
+            title: {
+                display: true,
+                text: '{{ title }}',
+                fontSize: 16,
+                fontStyle: 'bold'
+            },
+            legend: {
+                position: 'top',
+                align: 'center',
+            },
+            animation: {
+                duration: 0,
+            },
+        },
+
+    });
+
+    let enhancer = new ChartJSEnhancements(myChart);
+    enhancer.initialize();
+
+    document.getElementById('zoomReset').addEventListener('click', () => { enhancer.resetZoom(); });
+    </script>
+
+</body>
+</html>

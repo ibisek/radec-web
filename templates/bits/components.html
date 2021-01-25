@@ -1,0 +1,14 @@
+<ul class="list-group">
+    <li class="list-group-item list-group-item-primary"><strong>Components</strong></li>
+
+    {% for component in components %}
+    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1"><strong>{{ component.type }}</strong> | sn: {{ component.serial_no }}</h5>
+        </div>
+        <p class="mb-1">cycle hrs: {{ "%.1f"|format(component.cycle_hrs/3600) }} |
+            eq. cycles: {{ "%.1f"|format(component.eq_cycles) }} |
+            sim. eq. cycles: {{ "%.1f"|format(component.eq_cycles_sim) }}</p>
+    </a>
+    {% endfor %}
+</ul>

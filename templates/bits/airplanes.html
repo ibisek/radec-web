@@ -1,0 +1,26 @@
+<ul class="list-group">
+    <li class="list-group-item list-group-item-primary"><strong>Airplane{% if airplanes|length > 1 %}s{% endif
+        %}</strong></li>
+
+    {% for airplane in airplanes %}
+    <a href="/airplane/{{ airplane.id }}"
+       class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1"><b>{{ airplane.registration }}</b> | {{ airplane.type }}</h5>
+            <small class="text-muted">3 days ago</small>
+        </div>
+        <p class="mb-1">
+            model: {{ airplane.model }} |
+            country of registration: {{ airplane.registration_country }} |
+            year of production: {{ airplane.year_of_prod }} |
+            serial number: {{ airplane.serial_no }} |
+            number of landings: {{ airplane.num_landings }}
+        </p>
+        <small class="text-muted">Pending notifications:
+            info <span class="badge badge-primary badge-pill" style="background-color:green;">0</span>
+            warning <span class="badge badge-primary badge-pill" style="background-color:coral;">0</span>
+            urgent <span class="badge badge-primary badge-pill" style="background-color:crimson;">0</span>
+        </small>
+    </a>
+    {% endfor %}
+</ul>
