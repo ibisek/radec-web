@@ -20,7 +20,14 @@
             info <span class="badge badge-primary badge-pill" style="background-color:green;">0</span>
             warning <span class="badge badge-primary badge-pill" style="background-color:coral;">0</span>
             urgent <span class="badge badge-primary badge-pill" style="background-color:crimson;">0</span>
+        </small><br>
+        {% if airplane.numNotifications and airplane.numNotifications['sum'] > 0 %}
+        <small class="text-muted">Pending notifications:
+            {% if airplane.numNotifications['info'] > 0 %}info <span class="badge badge-primary badge-pill" style="background-color:green;"> {{ airplane.numNotifications['info'] }} </span>{% endif %}
+            {% if airplane.numNotifications['warning'] > 0 %}warning <span class="badge badge-primary badge-pill" style="background-color:coral;">{{ airplane.numNotifications['warning'] }}</span>{% endif %}
+            {% if airplane.numNotifications['urgent'] > 0 %}urgent <span class="badge badge-primary badge-pill" style="background-color:crimson;">{{ airplane.numNotifications['urgent'] }}</span>{% endif %}
         </small>
+        {% endif %}
     </a>
     {% endfor %}
 </ul>

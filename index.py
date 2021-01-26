@@ -86,6 +86,9 @@ def _listAirplanes(airplaneId: int = None):
         else:
             setattr(airplane, 'type', None)
 
+        numNotifications = notificationsDao.countNotificationsFor(airplaneId=airplane.id)
+        setattr(airplane, 'numNotifications', numNotifications)
+
     return airplanes
 
 
@@ -105,23 +108,8 @@ def _listEngines(airplaneId=None):
         airplane = AirplanesDao().getOne(id=engine.airplane_id)
         setattr(engine, 'airplane', airplane)
 
-        notifications = [n for n in notificationsDao.get(engine_id=engine.id)]
-        if notifications:
-            numInfo = 0
-            numWarning = 0
-            numUrgent = 0
-            for n in notifications:
-                if n.type >= 255:
-                    numUrgent += 1
-                elif n.type <= 1:
-                    numInfo += 1
-                else:
-                    numWarning += 1
-            numNotifications = {'len': len(notifications), 'info': numInfo, 'warning': numWarning, 'urgent': numUrgent}
-            setattr(engine, 'numNotifications', numNotifications)
-
-        else:
-            setattr(engine, 'notifications', [])
+        numNotifications = notificationsDao.countNotificationsFor(engineId=engine.id)
+        setattr(engine, 'numNotifications', numNotifications)
 
     return engines
 
@@ -154,15 +142,17 @@ def index():
 
 
 @app.route('/airplane/<airplaneId>')
-def indexAirplane(airplaneId:int):
+def indexAirplane(airplaneId: int):
     try:
-        airplaneId = int(airplaneId) if airplaneId else None
+        airplaneId = int(airplaneId)
     except ValueError:
         return render_template('errorMsg.html', message="No such data!")
 
-    airplane = airplanesDao.getOne(id=airplaneId)
-    if not airplane:
+    airplanes = _listAirplanes(airplaneId=airplaneId)
+    if len(airplanes) == 0:
         return render_template('errorMsg.html', message="No such data!")
+
+    airplane = airplanes[0]
 
     engines = _listEngines(airplaneId=airplaneId)
 
