@@ -190,7 +190,11 @@ def indexEngine(engineId: int):
     # notifications = _listNotifications(engineId=engineId)
     notifications = None
 
-    return render_template('index.html', airplanes=[airplane], engines=[engine], components=components, notifications=notifications)
+    menuItems = [{'text': 'Trend monitoring', 'link': '#'}]
+
+    return render_template('index.html', menuItems=menuItems,
+                           airplanes=[airplane], engines=[engine], components=components,
+                           notifications=notifications)
 
 
 @app.route('/chart/<engineId>/<flightId>/<flightIdx>/<cycleId>/<cycleIdx>')

@@ -11,9 +11,13 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
                 </li>
-<!--                <li class="nav-item">-->
-<!--                    <a class="nav-link" href="#">..</a>-->
-<!--                </li>-->
+                {% if menuItems and menuItems|length > 0 %}
+                    {% for menuitem in menuItems %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ menuitem.link }}">{{ menuitem.text }}</a>
+                    </li>
+                    {% endfor %}
+                {% endif %}
             </ul>
         </div>
     </nav>
