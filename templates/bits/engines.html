@@ -14,7 +14,7 @@
         {% if engine.numNotifications and engine.numNotifications['len'] > 0 %}
         <p class="mb-1">type: {{ engine.type }} | serial number: {{ engine.serial_no }} | year of production: {{
             engine.year_of_prod }} | installed on: {{ engine.installation_ts }} | removed on: {{ engine.removal_ts }} |
-            archived: {{ engine.archived }} | cycle hrs: {{ "%.1f"|format(engine.cycle_hours/3600) }} | cycle no: {{
+            cycle hrs: {{ "%.1f"|format(engine.cycle_hours/3600) }} | cycle no: {{
             engine.CYCLENo }} | cycle no TO: {{ engine.CYCLENoTO }}</p>
         <small class="text-muted">Pending notifications:
             {% if engine.numNotifications['info'] > 0 %}info <span class="badge badge-primary badge-pill" style="background-color:green;"> {{ engine.numNotifications['info'] }} </span>{% endif %}
