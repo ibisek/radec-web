@@ -158,11 +158,11 @@ def indexAirplane(airplaneId:int):
     try:
         airplaneId = int(airplaneId) if airplaneId else None
     except ValueError:
-        return redirect('/')
+        return render_template('errorMsg.html', message="No such data!")
 
     airplane = airplanesDao.getOne(id=airplaneId)
     if not airplane:
-        return redirect('/')  # TODO forward with info message
+        return render_template('errorMsg.html', message="No such data!")
 
     engines = _listEngines(airplaneId=airplaneId)
 
@@ -182,11 +182,11 @@ def indexEngine(engineId: int):
     try:
         airplaneId = int(engineId) if engineId else None
     except ValueError:
-        return redirect('/')
+        return render_template('errorMsg.html', message="No such data!")
 
     engine = enginesDao.getOne(id=engineId)
     if not engine:
-        return redirect('/')    # TODO forward with info message
+        return render_template('errorMsg.html', message="No such data!")
 
     airplane = airplanesDao.getOne(id=engine.airplane_id)
 
@@ -213,11 +213,11 @@ def showChart(engineId: int, flightId: int, flightIdx: int, cycleId: int, cycleI
         cycleIdx = int(cycleIdx)
     except Exception as ex:
         print(ex)
-        return redirect('/')    # TODO forward with info message
+        return render_template('errorMsg.html', message="No such data!")
 
     df: DataFrame = flightRecordingDao.loadDf(engineId=engineId, flightId=flightId, flightIdx=flightIdx, cycleId=cycleId, cycleIdx=cycleIdx)
     if df.empty:
-        return redirect('/')  # TODO forward with info message
+        return render_template('errorMsg.html', message="No such data!")
 
     title = f"Flight recording for engineId = {engineId}, flightId = {flightId}, idx = {flightIdx}, cycleId = {cycleId}, idx = {cycleIdx}"
 
