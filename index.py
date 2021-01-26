@@ -223,7 +223,8 @@ def showChart(engineId: int, flightId: int, flightIdx: int, cycleId: int, cycleI
 
     labels = ','.join([datetime.utcfromtimestamp(dt.astype(datetime) / 1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values])
 
-    keys = ('ALT', 'IAS', 'ITT', 'NG', 'NP')
+    iasKey = 'IAS' if 'IAS' in df.keys() else 'TAS'
+    keys = ('ALT', iasKey, 'ITT', 'NG', 'NP')
     colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
     datasets = []
     for color, key in zip(colors, keys):
