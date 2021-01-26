@@ -5,7 +5,7 @@ Created on 22. 01. 2021
 """
 
 from flask import Flask
-from flask import render_template
+from flask import render_template, redirect
 from datetime import datetime
 from pandas import DataFrame
 from collections import namedtuple
@@ -68,7 +68,7 @@ def _listFiles(limit: int = 10):
     # files = files[:limit]
 
     for file in files:
-        file.formatLabel = FileFormat(file.format).name
+        file.formatName = FileFormat(file.format).name
 
     return totNumFiles, files
 
@@ -141,46 +141,97 @@ def _listFlights(airplaneId: int):
 
 
 @app.route('/')
+def index():
+    airplanes = _listAirplanes()
+    engines = _listEngines()
+
+    totNumFiles, files = _listFiles(limit=10)
+    notifications = _listNotifications()
+
+    return render_template('index.html', airplanes=airplanes, engines=engines,
+                           files=files, totNumFiles=totNumFiles,
+                           notifications=notifications)
+
+
 @app.route('/airplane/<airplaneId>')
-@app.route('/engine/<engineId>')
-def index(airplaneId=None, engineId=None):
+def indexAirplane(airplaneId:int):
     try:
         airplaneId = int(airplaneId) if airplaneId else None
-        engineId = int(engineId) if engineId else None
     except ValueError:
-        airplaneId = None
-        engineId = None
+        return redirect('/')
 
-    airplanes = engines = flights = cycles = None
+    airplane = airplanesDao.getOne(id=airplaneId)
+    if not airplane:
+        return redirect('/')  # TODO forward with info message
 
-    if not engineId:
-        airplanes = _listAirplanes(airplaneId=airplaneId)
-        engines = _listEngines(airplaneId=airplaneId)
-    else:
-        engine = enginesDao.getOne(id=engineId)
-        airplane = airplanesDao.getOne(id=engine.airplane_id)
-        engines = _listEngines(airplaneId=airplane.id)
-        engines = [e for e in engines if e.id == engineId]
+    engines = _listEngines(airplaneId=airplaneId)
+
+    files = filesDao.listRawFilesForAirplane(airplaneId=airplaneId)
+    totNumFiles = len(files)
+
+    # notifications = _listNotifications(airplaneIds=[airplaneId], engineIds=[e.id for e in engines])
+    notifications = None
+
+    return render_template('index.html', airplanes=[airplane], engines=engines,
+                           files=files, totNumFiles=totNumFiles,
+                           notifications=notifications)
+
+
+@app.route('/engine/<engineId>')
+def indexEngine(engineId: int):
+    try:
+        airplaneId = int(engineId) if engineId else None
+    except ValueError:
+        return redirect('/')
+
+    engine = enginesDao.getOne(id=engineId)
+    if not engine:
+        return redirect('/')    # TODO forward with info message
+
+    airplane = airplanesDao.getOne(id=engine.airplane_id)
+
+    # enhances with some metadata (this is so lame but it works):
+    engine = [e for e in _listEngines(airplaneId=airplane.id) if e.id == engine.id][0]
 
     components = None
     if engineId:
         components = _listComponents(engineId=engineId)
-    elif len(engines) == 1:
-        components = _listComponents(engineId=engines[0].id)
 
-    notifications = files = totNumFiles = None
-    if not airplaneId and not engineId:
-        totNumFiles, files = _listFiles(limit=10)
-        notifications = _listNotifications()
+    # notifications = _listNotifications(engineId=engineId)
+    notifications = None
 
-    # if airplaneId or engineId:
-    #     if not airplaneId:
-    #         airplaneId = engines[0].airplane.id
-    #     flights = _listFlights(airplaneId=airplaneId, engineId=engineId)
-    #     # cycles = listCycles(flights)
+    return render_template('index.html', airplanes=[airplane], engines=[engine], components=components, notifications=notifications)
 
-    return render_template('index.html', airplanes=airplanes, engines=engines, components=components, files=files, totNumFiles=totNumFiles,
-                           notifications=notifications, flights=flights, cycles=cycles)
+
+@app.route('/chart/<engineId>/<flightId>/<flightIdx>/<cycleId>/<cycleIdx>')
+def showChart(engineId: int, flightId: int, flightIdx: int, cycleId: int, cycleIdx: int):
+    try:
+        engineId = int(engineId)
+        flightId = int(flightId)
+        flightIdx = int(flightIdx)
+        cycleId = int(cycleId)
+        cycleIdx = int(cycleIdx)
+    except Exception as ex:
+        print(ex)
+        return redirect('/')    # TODO forward with info message
+
+    df: DataFrame = flightRecordingDao.loadDf(engineId=engineId, flightId=flightId, flightIdx=flightIdx, cycleId=cycleId, cycleIdx=cycleIdx)
+    if df.empty:
+        return redirect('/')  # TODO forward with info message
+
+    title = f"Flight recording for engineId = {engineId}, flightId = {flightId}, idx = {flightIdx}, cycleId = {cycleId}, idx = {cycleIdx}"
+
+    labels = ','.join([datetime.utcfromtimestamp(dt.astype(datetime) / 1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values])
+
+    keys = ('ALT', 'IAS', 'ITT', 'NG', 'NP')
+    colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
+    datasets = []
+    for color, key in zip(colors, keys):
+        data = ','.join([f'{float(a):.0f}' for a in df[key].values])
+        ds = Dataset(label=key, data=data, color=color)
+        datasets.append(ds)
+
+    return render_template('chart.html', aspectRatio=16/9, chartId=1, title=title, labels=labels, datasets=datasets)
 
 
 @app.route('/pokus')

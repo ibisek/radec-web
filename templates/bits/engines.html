@@ -6,8 +6,9 @@
     <a href="/engine/{{engine.id}}"
        class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1"><strong>{{ engine.type }}</strong> on <strong>{{ engine.airplane.registration
-                }}</strong> as <strong>#{{ engine.engine_no }}</strong></h5>
+            <h5 class="mb-1"><strong>{{ engine.type }}</strong>
+                {% if engine.airplane %} on <strong>{{ engine.airplane.registration}}</strong> as <strong>#{{ engine.engine_no }}</strong> {% endif %}
+            </h5>
             <small class="text-muted">3 days ago</small>
         </div>
         {% if engine.numNotifications and engine.numNotifications['len'] > 0 %}

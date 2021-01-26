@@ -7,7 +7,12 @@
 
     {% for file in files %}
     <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span>{{ file.name }}&emsp;<small class="text-muted">format: {{ file.formatLabel }} | hash: {{ file.hash }}</small></span>
+        <span>{{ file.name }}&emsp;
+            <small class="text-muted">format: {{ file.formatName }}
+                {% if file.hash %} | hash: {{ file.hash }} {% endif %}
+                {% if file.engineNo %} | engine #{{ file.engineNo }} {% endif %}
+                {% if file.fligthId %} | <a href="/chart/{{ file.engineId }}/{{ file.fligthId }}/0/{{ file.cycleId }}/0">detail</a>{% endif %}
+            </small></span>
         {% if file.status == 0 %}<span class="badge badge-primary badge-pill" style="background-color:coral;">queued</span>{% endif %}
         {% if file.status == 1 %}<span class="badge badge-primary badge-pill" style="background-color:coral;">ready for processing</span>{% endif %}
         {% if file.status == 2 %}<span class="badge badge-primary badge-pill" style="background-color:cornflowerblue;">under examination</span>{% endif %}
