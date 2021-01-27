@@ -4,13 +4,15 @@ Created on 22. 01. 2021
 @author: ibisek
 """
 
+import numpy as np
 from flask import Flask
 from flask import render_template, redirect
 from datetime import datetime
 from pandas import DataFrame
 from collections import namedtuple
 from sklearn.linear_model import LinearRegression
-import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
 
 from data.structures import FileFormat
 from db.dao import flightRecordingDao
@@ -241,7 +243,7 @@ def showTrends(engineId: int):
     allLabels = []
     allDatasets = []
 
-    keys = ['y_value', 'mean', 'y_linreg']
+    keys = ['y_value', 'mean', 'y_linreg', 'y_polyreg']
     colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 0, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
     for fn in functions:
         df: DataFrame = regressionResultsDao.loadRegressionResultsData(engineId=engineId, function=fn)
@@ -257,6 +259,11 @@ def showTrends(engineId: int):
         linReg = LinearRegression()
         linReg.fit(x, y)
         df['y_linreg'] = linReg.predict(x)
+
+        degree = 3
+        polyreg = make_pipeline(PolynomialFeatures(degree), LinearRegression())
+        polyreg.fit(x, y)
+        df['y_polyreg'] = polyreg.predict(x)
 
         # df['y_rolling'] = df['y_value'].rolling(10, center=True).mean()
         # df = df.fillna(df['y_rolling'].mean())
