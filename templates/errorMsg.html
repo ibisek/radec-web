@@ -16,11 +16,11 @@
 
 
 <div style="display:block;position:absolute;left:33vw;width:33vw;height:100vh;text-align: center;">
-    <div style="margin: 0; position: absolute; top: 50%; -ms-transform: translateY(-50%); transform: translateY(-50%);">
-        <img src="/static/img/tape.jpeg" style="width:60%;"/>
+    <div style="margin: 0; position: absolute; top: 50%; -ms-transform: translateY(-65%); transform: translateY(-65%);">
+        <img src="/static/img/tape.jpeg" style="max-width: 80%;"/>
         <br><br>
         <h2 style="font-family: courier;">SORRY VOLE TAPE ERROR!</h2>
-        <p style="font-family: courier;">{{ message }}</p>
+        <p style="font-family: courier;">{{ message|safe }}</p>
     </div>
 </div>
 
