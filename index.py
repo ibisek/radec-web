@@ -9,6 +9,8 @@ from flask import render_template, redirect
 from datetime import datetime
 from pandas import DataFrame
 from collections import namedtuple
+from sklearn.linear_model import LinearRegression
+import numpy as np
 
 from data.structures import FileFormat
 from db.dao import flightRecordingDao
@@ -21,6 +23,7 @@ from db.dao.filesDao import FilesDao
 from db.dao.cyclesDao import CyclesDao
 from db.dao.componentsDao import ComponentsDao
 from db.dao.flightRecordingDao import FlightRecordingDao
+from db.dao.regressionResultsDao import RegressionResultsDao
 
 Dataset = namedtuple('Dataset', ['label', 'data', 'color'])
 
@@ -34,6 +37,7 @@ filesDao = FilesDao()
 flightsDao = FlightsDao()
 notificationsDao = NotificationsDao()
 flightRecordingDao = FlightRecordingDao()
+regressionResultsDao = RegressionResultsDao()
 
 
 def _listNotifications(limit: int = 10):
@@ -190,7 +194,7 @@ def indexEngine(engineId: int):
     # notifications = _listNotifications(engineId=engineId)
     notifications = None
 
-    menuItems = [{'text': 'Trend monitoring', 'link': '#'}]
+    menuItems = [{'text': 'Trend monitoring', 'link': f'/trends/{engineId}'}]
 
     return render_template('index.html', menuItems=menuItems,
                            airplanes=[airplane], engines=[engine], components=components,
@@ -229,6 +233,50 @@ def showChart(engineId: int, flightId: int, flightIdx: int, cycleId: int, cycleI
     return render_template('chart.html', aspectRatio=16/9, chartId=1, title=title, labels=labels, datasets=datasets)
 
 
+@app.route('/trends/<engineId>')
+def showTrends(engineId: int):
+    functions = regressionResultsDao.listFunctions(engineId=engineId)
+
+    allTitles = []
+    allLabels = []
+    allDatasets = []
+
+    keys = ['y_value', 'mean', 'y_linreg']
+    colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 0, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
+    for fn in functions:
+        df: DataFrame = regressionResultsDao.loadRegressionResultsData(engineId=engineId, function=fn)
+        if len(df) < 50:
+            return render_template('errorMsg.html',
+                                   message="Not enuf data!<br><br>You need to gather at least 50 data points before this analysis starts making any sense.")
+
+        # TODO -- MAGIC start --
+        df['mean'] = df['y_value'].mean()
+
+        x = np.arange(len(df)).reshape(-1, 1)
+        y = df['y_value'].values.reshape(-1, 1)
+        linReg = LinearRegression()
+        linReg.fit(x, y)
+        df['y_linreg'] = linReg.predict(x)
+
+        # df['y_rolling'] = df['y_value'].rolling(10, center=True).mean()
+        # df = df.fillna(df['y_rolling'].mean())
+        # TODO -- MAGIC END --
+
+        allTitles.append(f"{fn} for engine id {engineId}")
+        allLabels.append(','.join([datetime.utcfromtimestamp(dt.astype(datetime)/1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values]))
+
+        datasets = []
+        for color, key in zip(colors, keys):
+            data = ','.join([f'{float(a):.2f}' for a in df[key].values])
+            ds = Dataset(label=key, data=data, color=color)
+            datasets.append(ds)
+        allDatasets.append(datasets)
+
+    return render_template('charts.html', aspectRatio=3, titles=allTitles, labels=allLabels, datasets=allDatasets)
+
+# -----------------------------------------------------------------------------
+
+
 @app.route('/pokus')
 def pokus():
     engineId = 3
@@ -252,16 +300,6 @@ def pokus():
         datasets.append(ds)
 
     return render_template('pokus.html', id=1, title=title, labels=labels, datasets=datasets)
-
-
-# @app.route('/cam')
-# def cam():
-#     return render_template('cam.html')
-
-
-# @app.route('/test', methods=['GET'])
-# def test():
-#     return render_template('test.html')
 
 
 if __name__ == '__main__':
