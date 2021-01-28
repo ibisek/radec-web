@@ -1,4 +1,12 @@
 import os
+import sys
+
+# detect we are in debug mode:
+DEBUG = False
+val = sys.gettrace()
+if val:
+    DEBUG = True
+
 
 DB_HOST = '10.8.0.30'   # radec
 DB_PORT = 3306
