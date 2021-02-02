@@ -5,8 +5,7 @@ Created on 22. 01. 2021
 """
 
 import numpy as np
-from flask import Flask
-from flask import render_template, redirect
+from flask import Flask, render_template, redirect, make_response
 from datetime import datetime
 from pandas import DataFrame
 from collections import namedtuple
@@ -14,6 +13,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import make_pipeline
 
+from configuration import DEBUG
+from customFilters import tsFormat
 from data.structures import FileFormat
 from db.dao import flightRecordingDao
 from db.dao.airplanesDao import AirplanesDao
@@ -36,10 +37,14 @@ componentsDao = ComponentsDao()
 enginesDao = EnginesDao()
 equipmentDao = EquipmentDao()
 filesDao = FilesDao()
+cyclesDao = CyclesDao()
 flightsDao = FlightsDao()
 notificationsDao = NotificationsDao()
 flightRecordingDao = FlightRecordingDao()
 regressionResultsDao = RegressionResultsDao()
+
+# register custom filters:
+app.jinja_env.filters['tsFormat'] = tsFormat
 
 
 def _listNotifications(limit: int = 10):
@@ -162,14 +167,17 @@ def indexAirplane(airplaneId: int):
 
     engines = _listEngines(airplaneId=airplaneId)
 
-    files = filesDao.listRawFilesForAirplane(airplaneId=airplaneId)
+    files = filesDao.listRawFilesForAirplane(airplaneId=airplaneId, limit=5)
     totNumFiles = len(files)
+
+    flights, _ = flightsDao.listForView(airplaneId=airplaneId)
 
     # notifications = _listNotifications(airplaneIds=[airplaneId], engineIds=[e.id for e in engines])
     notifications = None
 
     return render_template('index.html', airplanes=[airplane], engines=engines,
                            files=files, totNumFiles=totNumFiles,
+                           flights=flights, airplaneId=airplaneId,
                            notifications=notifications)
 
 
@@ -193,6 +201,8 @@ def indexEngine(engineId: int):
     if engineId:
         components = _listComponents(engineId=engineId)
 
+    cycles, _ = cyclesDao.listForView(engineId=engineId)
+
     # notifications = _listNotifications(engineId=engineId)
     notifications = None
 
@@ -200,7 +210,37 @@ def indexEngine(engineId: int):
 
     return render_template('index.html', menuItems=menuItems,
                            airplanes=[airplane], engines=[engine], components=components,
+                           cycles=cycles,
                            notifications=notifications)
+
+
+@app.route('/csv/<type>/<id>', methods=['GET'])
+def csv(type: str, id: int):
+    """
+    :param type: c-ycle, f-light
+    :param id: cycles for engineId or flights for airplaneId
+    :return:
+    """
+    if not type or not id or type not in ('c', 'f'):
+        return redirect('/')
+
+    if type == 'c':
+        records, colNames = cyclesDao.listForView(engineId=id)
+    else:
+        records, colNames = flightsDao.listForView(airplaneId=id)
+
+    csvText = ';'.join([colName for colName in colNames]) + '\n'
+    for record in records:
+        row = ";".join([str(getattr(record, colName, '')) for colName in colNames])
+        csvText += row + "\n"
+
+    typeStr = 'cycles' if type == 'c' else 'flights'
+
+    output = make_response(csvText)
+    output.headers["Content-Disposition"] = f"attachment; filename={typeStr}_{datetime.now().strftime('%Y-%m-%d')}.csv"
+    output.headers["Content-type"] = "text/csv"
+
+    return output
 
 
 @app.route('/chart/<engineId>/<flightId>/<flightIdx>/<cycleId>/<cycleIdx>')
@@ -243,7 +283,7 @@ def showTrends(engineId: int):
     allLabels = []
     allDatasets = []
 
-    keys = ['y_value', 'mean', 'y_linreg', 'y_polyreg']
+    keys = ['y_value', 'mean', 'y_linreg']  # , 'y_polyreg'
     colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 0, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
     for fn in functions:
         df: DataFrame = regressionResultsDao.loadRegressionResultsData(engineId=engineId, function=fn)
@@ -260,10 +300,10 @@ def showTrends(engineId: int):
         linReg.fit(x, y)
         df['y_linreg'] = linReg.predict(x)
 
-        degree = 3
-        polyreg = make_pipeline(PolynomialFeatures(degree), LinearRegression())
-        polyreg.fit(x, y)
-        df['y_polyreg'] = polyreg.predict(x)
+        # degree = 3
+        # polyreg = make_pipeline(PolynomialFeatures(degree), LinearRegression())
+        # polyreg.fit(x, y)
+        # df['y_polyreg'] = polyreg.predict(x)
 
         # df['y_rolling'] = df['y_value'].rolling(10, center=True).mean()
         # df = df.fillna(df['y_rolling'].mean())
@@ -310,4 +350,5 @@ def pokus():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.config['TEMPLATES_AUTO_RELOAD'] = DEBUG
+    app.run(debug=DEBUG)
