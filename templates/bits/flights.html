@@ -1,0 +1,51 @@
+<ul class="list-group">
+    <a href="{% if flights|length > 0 %}/csv/f/{{ airplaneId }}{% else %}#{% endif %}"
+       class="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
+        <strong>Flights</strong>
+        <span class="badge badge-primary badge-pill" style="background-color:#084298;">{{ flights|length }}</span>
+    </a>
+
+    {% for flight in flights %}
+    {% set subFlight = flight.root_id != None %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{% if flight.fileName %}{{ flight.fileName }}{% else %}&lt;subflight&gt;{% endif %}&emsp;
+            <small class="text-muted">
+                id: {{ flight.id }}.{{ flight.idx }}
+                {% if subFlight %}
+                    &nbsp;| root_id: {{ flight.root_id }}
+                {% endif %}
+
+                {% if flight.takeoff_ts and flight.landing_ts %}
+                    &nbsp;| TO: {{ flight.takeoff_ts|tsFormat }} -> LA: {{ flight.takeoff_ts|tsFormat }}
+                {% endif %}
+
+                {% if flight.flight_time %}
+                    &nbsp;| fligth time: {{ "%.2f"|format(flight.flight_time/3600) }} hrs
+                {% endif %}
+
+                {% if flight.operation_time %}
+                    &nbsp;| operation time: {{ "%.2f"|format(flight.operation_time/3600) }} hrs
+                {% endif %}
+
+                {#
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.NGlimL %}green{% else %}crimson{% endif %};">NG lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.NPlimL %}green{% else %}crimson{% endif %};">NP lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.ITTlimL %}green{% else %}crimson{% endif %};">ITT lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.TQlimL %}green{% else %}crimson{% endif %};">TQ lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.OilPlimL %}green{% else %}crimson{% endif %};">OilP lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.FuelPlimL %}green{% else %}crimson{% endif %};">FuelP lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.FireWarning %}green{% else %}crimson{% endif %};">Fire Warn</span>
+                #}
+                {#
+                &nbsp;| ITTOpMax: {% if cycle.ITTOpMax %}<b>{{ "%.f"|format(cycle.ITTOpMax) }}</b>{% endif %}&deg;C
+                &nbsp;| ITTSUmax: {% if cycle.ITTSUmax %}<b>{{ "%.f"|format(cycle.ITTSUmax) }}</b>{% endif %}&deg;C
+                &nbsp;| ITTSUgrad: {% if cycle.ITTSUgrad %}<b>{{ "%.f"|format(cycle.ITTSUgrad) }}</b>{% endif %}&deg;C
+                #}
+
+                {% if flight.engineId and flight.flightId and flight.flightIdx != None and flight.cycleId and flight.cycleIdx != None %}
+                &nbsp;| <a href="/chart/{{ flight.engineId }}/{{ flight.flightId }}/{{ flight.flightIdx }}/{{ flight.cycleId }}/{{ flight.cycleIdx }}">detail</a>
+                {% endif %}
+            </small></span>
+    </li>
+    {% endfor %}
+</ul>

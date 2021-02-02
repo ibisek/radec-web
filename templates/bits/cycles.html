@@ -1,0 +1,29 @@
+<ul class="list-group">
+    <a href="{% if engines|length > 0 %}/csv/c/{{ engines[0].id }} }}{% else %}#{% endif %}"
+       class="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
+        <strong>Cycles</strong>
+        <span class="badge badge-primary badge-pill" style="background-color:#084298;">{{ cycles|length }}</span>
+    </a>
+
+    {% for cycle in cycles %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{{ cycle.fileName }}&emsp;
+            <small class="text-muted">
+                id: {{ cycle.id }}.{{ cycle.idx }}
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.NGlimL %}green{% else %}crimson{% endif %};">NG lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.NPlimL %}green{% else %}crimson{% endif %};">NP lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.ITTlimL %}green{% else %}crimson{% endif %};">ITT lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.TQlimL %}green{% else %}crimson{% endif %};">TQ lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.OilPlimL %}green{% else %}crimson{% endif %};">OilP lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.FuelPlimL %}green{% else %}crimson{% endif %};">FuelP lim</span>
+                &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.FireWarning %}green{% else %}crimson{% endif %};">Fire Warn</span>
+                {#
+                &nbsp;| ITTOpMax: {% if cycle.ITTOpMax %}<b>{{ "%.f"|format(cycle.ITTOpMax) }}</b>{% endif %}&deg;C
+                &nbsp;| ITTSUmax: {% if cycle.ITTSUmax %}<b>{{ "%.f"|format(cycle.ITTSUmax) }}</b>{% endif %}&deg;C
+                &nbsp;| ITTSUgrad: {% if cycle.ITTSUgrad %}<b>{{ "%.f"|format(cycle.ITTSUgrad) }}</b>{% endif %}&deg;C
+                #}
+                {% if cycle.flightId %} | <a href="/chart/{{ cycle.engine_id }}/{{ cycle.flightId }}/{{ cycle.flightIdx }}/{{ cycle.cycleId }}/{{ cycle.cycleIdx }}">detail</a>{% endif %}
+            </small></span>
+    </li>
+    {% endfor %}
+</ul>
