@@ -1,1 +1,1 @@
-/home/jaja/wqz/prog/python/lu.vut.dataAnalyser/src/utils/singleton.py
+/home/jaja/wqz/prog/python/radec-dataAnalyser/src/utils/singleton.py

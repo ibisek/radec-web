@@ -1,1 +1,1 @@
-/home/jaja/wqz/prog/python/lu.vut.dataAnalyser/src/db/DbSource.py
+/home/jaja/wqz/prog/python/radec-dataAnalyser/src/db/DbSource.py
