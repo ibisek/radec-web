@@ -9,7 +9,7 @@
     <li class="list-group-item d-flex justify-content-between align-items-center">
         <span>{{ cycle.fileName }}&emsp;
             <small class="text-muted">
-                id: {{ cycle.id }}.{{ cycle.idx }}
+                id: {{ cycle.id }}
                 &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.NGlimL %}green{% else %}crimson{% endif %};">NG lim</span>
                 &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.NPlimL %}green{% else %}crimson{% endif %};">NP lim</span>
                 &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.ITTlimL %}green{% else %}crimson{% endif %};">ITT lim</span>
@@ -22,7 +22,7 @@
                 &nbsp;| ITTSUmax: {% if cycle.ITTSUmax %}<b>{{ "%.f"|format(cycle.ITTSUmax) }}</b>{% endif %}&deg;C
                 &nbsp;| ITTSUgrad: {% if cycle.ITTSUgrad %}<b>{{ "%.f"|format(cycle.ITTSUgrad) }}</b>{% endif %}&deg;C
                 #}
-                {% if cycle.flightId %} | <a href="/chart/{{ cycle.engine_id }}/{{ cycle.flightId }}/{{ cycle.flightIdx }}/{{ cycle.cycleId }}/{{ cycle.cycleIdx }}">detail</a>{% endif %}
+                {% if cycle.flightId %} | <a href="/chart/{{ cycle.engine_id }}/{{ cycle.flightId }}">detail</a>{% endif %}
             </small></span>
     </li>
     {% endfor %}

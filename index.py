@@ -86,7 +86,7 @@ def _listFiles(limit: int = 10):
 
 def _listAirplanes(airplaneId: int = None):
     if airplaneId:
-        airplanes = [a for a in airplanesDao.get(id=airplaneId)]
+        airplanes = [airplanesDao.getOne(id=airplaneId)]
     else:
         airplanes = [a for a in airplanesDao.get()]
 
@@ -105,7 +105,7 @@ def _listAirplanes(airplaneId: int = None):
 
 def _listEngines(airplaneId=None):
     if airplaneId:
-        engines = [a for a in enginesDao.get(airplane_id=airplaneId)]
+        engines = [enginesDao.getOne(airplane_id=airplaneId)]
     else:
         engines = [a for a in enginesDao.get()]
 
@@ -243,23 +243,22 @@ def csv(type: str, id: int):
     return output
 
 
-@app.route('/chart/<engineId>/<flightId>/<flightIdx>/<cycleId>/<cycleIdx>')
-def showChart(engineId: int, flightId: int, flightIdx: int, cycleId: int, cycleIdx: int):
+@app.route('/chart/<engineId>/<flightId>')
+def showChart(engineId: int, flightId: int):
     try:
         engineId = int(engineId)
         flightId = int(flightId)
-        flightIdx = int(flightIdx)
-        cycleId = int(cycleId)
-        cycleIdx = int(cycleIdx)
     except Exception as ex:
         print(ex)
         return render_template('errorMsg.html', message="No such data!")
 
-    df: DataFrame = flightRecordingDao.loadDf(engineId=engineId, flightId=flightId, flightIdx=flightIdx, cycleId=cycleId, cycleIdx=cycleIdx)
+    flight = flightsDao.getOne(id=flightId)
+
+    df: DataFrame = flightRecordingDao.loadDf(engineId=engineId, startTs=flight.rec_start_ts, endTs=flight.rec_end_ts)
     if df.empty:
         return render_template('errorMsg.html', message="No such data!")
 
-    title = f"Flight recording for engineId = {engineId}, flightId = {flightId}, idx = {flightIdx}, cycleId = {cycleId}, idx = {cycleIdx}"
+    title = f"Flight recording for engineId = {engineId}, flightId = {flightId}"
 
     labels = ','.join([datetime.utcfromtimestamp(dt.astype(datetime) / 1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values])
 
@@ -323,30 +322,29 @@ def showTrends(engineId: int):
 
 # -----------------------------------------------------------------------------
 
-
-@app.route('/pokus')
-def pokus():
-    engineId = 3
-    flightId = 1800
-    flightIdx = 2
-    cycleId = 4235
-    cycleIdx = 0
-
-    df: DataFrame = flightRecordingDao.loadDf(engineId=engineId, flightId=flightId, flightIdx=flightIdx, cycleId=cycleId, cycleIdx=cycleIdx)
-
-    title = f"Flight recording for engineId = {engineId}, flightId = {flightId}, idx = {flightIdx}, cycleId = {cycleId}, idx = {cycleId}"
-
-    labels = ','.join([datetime.utcfromtimestamp(dt.astype(datetime)/1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values])
-
-    keys = ('ALT', 'IAS', 'ITT', 'NG', 'NP')
-    colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
-    datasets = []
-    for color, key in zip(colors, keys):
-        data = ','.join([f'{float(a):.0f}' for a in df[key].values])
-        ds = Dataset(label=key, data=data, color=color)
-        datasets.append(ds)
-
-    return render_template('pokus.html', id=1, title=title, labels=labels, datasets=datasets)
+# @app.route('/pokus')
+# def pokus():
+#     engineId = 3
+#     flightId = 1800
+#     flightIdx = 2
+#     cycleId = 4235
+#     cycleIdx = 0
+#
+#     df: DataFrame = flightRecordingDao.loadDf(engineId=engineId, flightId=flightId, flightIdx=flightIdx, cycleId=cycleId, cycleIdx=cycleIdx)
+#
+#     title = f"Flight recording for engineId = {engineId}, flightId = {flightId}, idx = {flightIdx}, cycleId = {cycleId}, idx = {cycleId}"
+#
+#     labels = ','.join([datetime.utcfromtimestamp(dt.astype(datetime)/1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values])
+#
+#     keys = ('ALT', 'IAS', 'ITT', 'NG', 'NP')
+#     colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
+#     datasets = []
+#     for color, key in zip(colors, keys):
+#         data = ','.join([f'{float(a):.0f}' for a in df[key].values])
+#         ds = Dataset(label=key, data=data, color=color)
+#         datasets.append(ds)
+#
+#     return render_template('pokus.html', id=1, title=title, labels=labels, datasets=datasets)
 
 
 if __name__ == '__main__':

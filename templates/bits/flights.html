@@ -6,25 +6,21 @@
     </a>
 
     {% for flight in flights %}
-    {% set subFlight = flight.root_id != None %}
     <li class="list-group-item d-flex justify-content-between align-items-center">
         <span>{% if flight.fileName %}{{ flight.fileName }}{% else %}&lt;subflight&gt;{% endif %}&emsp;
             <small class="text-muted">
-                id: {{ flight.id }}.{{ flight.idx }}
-                {% if subFlight %}
-                    &nbsp;| root_id: {{ flight.root_id }}
-                {% endif %}
+                {#id: {{ flight.id }}.{{ flight.idx }}#}
 
                 {% if flight.takeoff_ts and flight.landing_ts %}
-                    &nbsp;| TO: {{ flight.takeoff_ts|tsFormat }} -> LA: {{ flight.takeoff_ts|tsFormat }}
+                    &nbsp;TO: {{ flight.takeoff_ts|tsFormat }} -> LA: {{ flight.takeoff_ts|tsFormat }}
                 {% endif %}
 
                 {% if flight.flight_time %}
-                    &nbsp;| fligth time: {{ "%.2f"|format(flight.flight_time/3600) }} hrs
+                &nbsp;| fligth time: <strong>{{ "%.2f"|format(flight.flight_time/3600) }}</strong> hrs
                 {% endif %}
 
                 {% if flight.operation_time %}
-                    &nbsp;| operation time: {{ "%.2f"|format(flight.operation_time/3600) }} hrs
+                &nbsp;| operation time: <strong>{{ "%.2f"|format(flight.operation_time/3600) }}</strong> hrs
                 {% endif %}
 
                 {#
@@ -43,7 +39,7 @@
                 #}
 
                 {% if flight.engineId and flight.flightId and flight.flightIdx != None and flight.cycleId and flight.cycleIdx != None %}
-                &nbsp;| <a href="/chart/{{ flight.engineId }}/{{ flight.flightId }}/{{ flight.flightIdx }}/{{ flight.cycleId }}/{{ flight.cycleIdx }}">detail</a>
+                &nbsp;| <a href="/chart/{{ flight.engineId }}/{{ flight.flightId }}">detail</a>
                 {% endif %}
             </small></span>
     </li>

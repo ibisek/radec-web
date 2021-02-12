@@ -11,7 +11,7 @@
             <small class="text-muted">format: {{ file.formatName }}
                 {% if file.hash %} | hash: {{ file.hash }} {% endif %}
                 {% if file.engineNo %} | engine #{{ file.engineNo }} {% endif %}
-                {% if file.fligthId %} | <a href="/chart/{{ file.engineId }}/{{ file.fligthId }}/0/{{ file.cycleId }}/0">detail</a>{% endif %}
+                {% if file.fligthId %} | <a href="/chart/{{ file.engineId }}/{{ file.fligthId }}">detail</a>{% endif %}
             </small></span>
         {% if file.status == 0 %}<span class="badge badge-primary badge-pill" style="background-color:coral;">queued</span>{% endif %}
         {% if file.status == 1 %}<span class="badge badge-primary badge-pill" style="background-color:coral;">ready for processing</span>{% endif %}
