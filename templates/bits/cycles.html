@@ -1,5 +1,5 @@
 <ul class="list-group">
-    <a href="{% if engines|length > 0 %}/csv/c/{{ engines[0].id }} }}{% else %}#{% endif %}"
+    <a href="{% if engines|length > 0 %}/csv/c/{{ engines[0].id }} {% else %}#{% endif %}"
        class="list-group-item list-group-item-primary d-flex justify-content-between align-items-center">
         <strong>Cycles</strong>
         <span class="badge badge-primary badge-pill" style="background-color:#084298;">{{ cycles|length }}</span>
