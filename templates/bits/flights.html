@@ -38,7 +38,7 @@
                 &nbsp;| ITTSUgrad: {% if cycle.ITTSUgrad %}<b>{{ "%.f"|format(cycle.ITTSUgrad) }}</b>{% endif %}&deg;C
                 #}
 
-                {% if flight.engineId and flight.flightId and flight.flightIdx != None and flight.cycleId and flight.cycleIdx != None %}
+                {% if flight.engineId and flight.flightId %}
                 &nbsp;| <a href="/chart/{{ flight.engineId }}/{{ flight.flightId }}">detail</a>
                 {% endif %}
             </small></span>
