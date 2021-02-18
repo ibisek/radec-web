@@ -16,11 +16,11 @@
                 {% endif %}
 
                 {% if flight.flight_time %}
-                &nbsp;| fligth time: <strong>{{ "%.2f"|format(flight.flight_time/3600) }}</strong> hrs
+                &nbsp;| fligth time: <strong>{{ flight.flight_time|durationFormat }}</strong>
                 {% endif %}
 
                 {% if flight.operation_time %}
-                &nbsp;| operation time: <strong>{{ "%.2f"|format(flight.operation_time/3600) }}</strong> hrs
+                &nbsp;| operation time: <strong>{{ flight.operation_time|durationFormat }}</strong>
                 {% endif %}
 
                 {#

@@ -14,7 +14,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import make_pipeline
 
 from configuration import DEBUG
-from customFilters import tsFormat
+from customFilters import tsFormat, durationFormat
 from data.structures import FileFormat
 from db.dao import flightRecordingDao
 from db.dao.airplanesDao import AirplanesDao
@@ -31,6 +31,9 @@ from db.dao.regressionResultsDao import RegressionResultsDao
 Dataset = namedtuple('Dataset', ['label', 'data', 'color'])
 
 app = Flask(__name__)
+# register custom filters:
+app.jinja_env.filters['tsFormat'] = tsFormat
+app.jinja_env.filters['durationFormat'] = durationFormat
 
 airplanesDao = AirplanesDao()
 componentsDao = ComponentsDao()
@@ -43,8 +46,6 @@ notificationsDao = NotificationsDao()
 flightRecordingDao = FlightRecordingDao()
 regressionResultsDao = RegressionResultsDao()
 
-# register custom filters:
-app.jinja_env.filters['tsFormat'] = tsFormat
 
 
 def _listNotifications(limit: int = 10):
