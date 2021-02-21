@@ -7,10 +7,38 @@
 
     {% for flight in flights %}
     <li class="list-group-item d-flex justify-content-between align-items-center">
-        <span>{% if flight.fileName %}{{ flight.fileName }}{% else %}&lt;subflight&gt;{% endif %}&emsp;
+        <span style="width:100%">{# {% if flight.fileName %}{{ flight.fileName }}{% else %}&lt;subflight&gt;{% endif %}&emsp; #}
+            <div class="">
+                <div class="row">
+                    <div class="col-4">
+                    {% if flight.takeoff_ts and flight.landing_ts %}
+                        Take-off: <strong>{{ flight.takeoff_ts|tsFormat }}</strong> from <strong>LKxx</strong> <br>
+                        Landing: <strong>{{ flight.takeoff_ts|tsFormat }}</strong> at <strong>LKxx</strong> <br>
+                    {% endif %}
+                    </div>
+                    <div class="col-3">
+                        {% if flight.flight_time %}
+                            fligth time: <strong>{{ flight.flight_time|durationFormat }}</strong>
+                        {% endif %}
+                        <br>
+                        {% if flight.operation_time %}
+                        operation time: <strong>{{ flight.operation_time|durationFormat }}</strong>
+                        {% endif %}
+                        </div>
+                    <div class="col">
+                        {% if flight.engineId and flight.flightId %}
+                        <a href="/chart/{{ flight.engineId }}/{{ flight.flightId }}" class="btn btn-primary">flight detail</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
             <small class="text-muted">
+                source file: {% if flight.fileName %}{{ flight.fileName }}{% endif %}
+
                 {#id: {{ flight.id }}.{{ flight.idx }}#}
 
+                {#
                 {% if flight.takeoff_ts and flight.landing_ts %}
                     &nbsp;TO: {{ flight.takeoff_ts|tsFormat }} -> LA: {{ flight.takeoff_ts|tsFormat }}
                 {% endif %}
@@ -22,6 +50,7 @@
                 {% if flight.operation_time %}
                 &nbsp;| operation time: <strong>{{ flight.operation_time|durationFormat }}</strong>
                 {% endif %}
+                #}
 
                 {#
                 &nbsp;<span class="badge badge-primary badge-pill" style="background-color:{% if not cycle.NGlimL %}green{% else %}crimson{% endif %};">NG lim</span>
@@ -38,10 +67,13 @@
                 &nbsp;| ITTSUgrad: {% if cycle.ITTSUgrad %}<b>{{ "%.f"|format(cycle.ITTSUgrad) }}</b>{% endif %}&deg;C
                 #}
 
+                {#
                 {% if flight.engineId and flight.flightId %}
                 &nbsp;| <a href="/chart/{{ flight.engineId }}/{{ flight.flightId }}">detail</a>
                 {% endif %}
-            </small></span>
+                #}
+            </small>
+        </span>
     </li>
     {% endfor %}
 </ul>
