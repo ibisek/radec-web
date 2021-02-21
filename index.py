@@ -283,7 +283,7 @@ def showTrends(engineId: int):
     allLabels = []
     allDatasets = []
 
-    keys = ['y_value', 'mean', 'y_linreg']  # , 'y_polyreg'
+    keys = ['delta', 'mean', 'y_linreg']  # , 'y_polyreg'
     colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 0, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
     for fn in functions:
         df: DataFrame = regressionResultsDao.loadRegressionResultsData(engineId=engineId, function=fn)
@@ -292,10 +292,10 @@ def showTrends(engineId: int):
                                    message="Not enuf data!<br><br>You need to gather at least 50 data points before this analysis starts making any sense.")
 
         # TODO -- MAGIC start --
-        df['mean'] = df['y_value'].mean()
+        df['mean'] = df['delta'].mean()
 
         x = np.arange(len(df)).reshape(-1, 1)
-        y = df['y_value'].values.reshape(-1, 1)
+        y = df['delta'].values.reshape(-1, 1)
         linReg = LinearRegression()
         linReg.fit(x, y)
         df['y_linreg'] = linReg.predict(x)
@@ -305,7 +305,7 @@ def showTrends(engineId: int):
         # polyreg.fit(x, y)
         # df['y_polyreg'] = polyreg.predict(x)
 
-        # df['y_rolling'] = df['y_value'].rolling(10, center=True).mean()
+        # df['y_rolling'] = df['delta'].rolling(10, center=True).mean()
         # df = df.fillna(df['y_rolling'].mean())
         # TODO -- MAGIC END --
 
