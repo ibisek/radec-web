@@ -14,10 +14,12 @@
             country of registration: {{ airplane.registration_country }} |
             year of production: {{ airplane.year_of_prod }} |
             s/n: {{ airplane.serial_no }}
-            <br>
-            number of landings: <strong>{{ airplane.numFlights }}</strong>
-            | flight time: <strong>{{ airplane.flightTime|durationFormat }}</strong>
-            | operation time: <strong>{{ airplane.operationTime|durationFormat }}</strong>
+            {% if airplane.numFlights and airplane.flightTime and airplane.operationTime %}
+                <br>
+                number of landings: <strong>{{ airplane.numFlights }}</strong>
+                | flight time: <strong>{{ airplane.flightTime|durationFormat }}</strong>
+                | operation time: <strong>{{ airplane.operationTime|durationFormat }}</strong>
+            {% else %}
         </p>
         {% if airplane.numNotifications and airplane.numNotifications['sum'] > 0 %}
         <small class="text-muted">Pending notifications:
