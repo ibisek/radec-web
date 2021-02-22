@@ -47,7 +47,6 @@ flightRecordingDao = FlightRecordingDao()
 regressionResultsDao = RegressionResultsDao()
 
 
-
 def _listNotifications(limit: int = 10):
     notifications = notificationsDao.listMostRecent(limit=limit)
 
@@ -140,9 +139,20 @@ def _listFlights(airplaneId: int):
     return []
 
 
+def enhanceAirplane(airplane):
+    # enhance the airplane by its operation indicators:
+    numFlights, flightTime, operationTime = flightsDao.getAirplaneStats(airplaneId=airplane.id)
+    setattr(airplane, 'numFlights', numFlights)
+    setattr(airplane, 'flightTime', flightTime)
+    setattr(airplane, 'operationTime', operationTime)
+
+
 @app.route('/')
 def index():
     airplanes = _listAirplanes()
+    for airplane in airplanes:
+        enhanceAirplane(airplane)
+
     engines = _listEngines()
 
     totNumFiles, files = _listFiles(limit=10)
@@ -165,6 +175,7 @@ def indexAirplane(airplaneId: int):
         return render_template('errorMsg.html', message="No such data!")
 
     airplane = airplanes[0]
+    enhanceAirplane(airplane)
 
     engines = _listEngines(airplaneId=airplaneId)
 
@@ -194,8 +205,9 @@ def indexEngine(engineId: int):
         return render_template('errorMsg.html', message="No such data!")
 
     airplane = airplanesDao.getOne(id=engine.airplane_id)
+    enhanceAirplane(airplane)
 
-    # enhances with some metadata (this is so lame but it works):
+    # enhances with some metadata (this is so lame but it just works):
     engine = [e for e in _listEngines(airplaneId=airplane.id) if e.id == engine.id][0]
 
     components = None
