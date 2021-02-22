@@ -19,7 +19,7 @@
                 number of landings: <strong>{{ airplane.numFlights }}</strong>
                 | flight time: <strong>{{ airplane.flightTime|durationFormat }}</strong>
                 | operation time: <strong>{{ airplane.operationTime|durationFormat }}</strong>
-            {% else %}
+            {% endif %}
         </p>
         {% if airplane.numNotifications and airplane.numNotifications['sum'] > 0 %}
         <small class="text-muted">Pending notifications:
