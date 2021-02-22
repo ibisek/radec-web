@@ -28,7 +28,7 @@ from db.dao.componentsDao import ComponentsDao
 from db.dao.flightRecordingDao import FlightRecordingDao
 from db.dao.regressionResultsDao import RegressionResultsDao
 
-Dataset = namedtuple('Dataset', ['label', 'data', 'color'])
+Dataset = namedtuple('Dataset', ['label', 'unit', 'data', 'color'])
 
 app = Flask(__name__)
 # register custom filters:
@@ -264,15 +264,16 @@ def showChart(engineId: int, flightId: int):
     labels = ','.join([datetime.utcfromtimestamp(dt.astype(datetime) / 1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values])
 
     iasKey = 'IAS' if 'IAS' in df.keys() else 'TAS'
-    keys = ('ALT', iasKey, 'ITT', 'NG', 'NP')
-    colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
+    keys = ('ALT', iasKey, 'ITT', 'T0', 'NG', 'NP')
+    colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(252, 160, 3, 1)', 'rgba(0, 255, 255, 1)', 'rgba(255, 0, 255, 1)')
+    units = ('m', 'km/h', '°C', '°C', '%', '1/min')
     datasets = []
-    for color, key in zip(colors, keys):
+    for color, key, unit in zip(colors, keys, units):
         data = ','.join([f'{float(a):.0f}' for a in df[key].values])
-        ds = Dataset(label=key, data=data, color=color)
+        ds = Dataset(label=key, unit=unit, data=data, color=color)
         datasets.append(ds)
 
-    return render_template('chart.html', aspectRatio=16/9, chartId=1, title=title, labels=labels, datasets=datasets)
+    return render_template('chart.html', aspectRatio=16/9, chartId=1, title=title, labels=labels, units=units, datasets=datasets)
 
 
 @app.route('/trends/<engineId>')

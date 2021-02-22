@@ -50,7 +50,7 @@
                     id: '{{ ds.label }}',
                     scaleLabel: {
                         display: true,
-                        labelString: '{{ ds.label }}',
+                        labelString: '{{ ds.label }} [{{ ds.unit|safe }}]',
                     },
                     type: 'linear',
                     {% if loop.index == 1 %}position: 'left',{% else %}position: 'right',{% endif %}
