@@ -13,7 +13,7 @@
                     <div class="col-4">
                     {% if flight.takeoff_ts and flight.landing_ts %}
                         Take-off: <strong>{{ flight.takeoff_ts|tsFormat }}</strong> from <strong>LKxx</strong> <br>
-                        Landing: <strong>{{ flight.takeoff_ts|tsFormat }}</strong> at <strong>LKxx</strong> <br>
+                        Landing: <strong>{{ flight.landing_ts|tsFormat }}</strong> at <strong>LKxx</strong> <br>
                     {% endif %}
                     </div>
                     <div class="col-3">
