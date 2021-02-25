@@ -105,7 +105,7 @@ def _listAirplanes(airplaneId: int = None):
 
 def _listEngines(airplaneId=None):
     if airplaneId:
-        engines = [enginesDao.getOne(airplane_id=airplaneId)]
+        engines = [e for e in enginesDao.get(airplane_id=airplaneId)]
     else:
         engines = [a for a in enginesDao.get()]
 
