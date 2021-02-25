@@ -328,7 +328,8 @@ def showTrends(engineId: int):
         datasets = []
         for color, key in zip(colors, keys):
             data = ','.join([f'{float(a):.2f}' for a in df[key].values])
-            ds = Dataset(label=key, data=data, color=color)
+            unit = ''
+            ds = Dataset(label=key, unit=unit, data=data, color=color)
             datasets.append(ds)
         allDatasets.append(datasets)
 
