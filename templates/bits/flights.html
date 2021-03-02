@@ -37,7 +37,9 @@
             </div>
 
             <small class="text-muted">
+                {% if flight.fileName %}
                 source file: {% if flight.fileName %}{{ flight.fileName }}{% endif %}
+                {% endif %}
 
                 {#id: {{ flight.id }}.{{ flight.idx }}#}
 
