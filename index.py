@@ -135,10 +135,6 @@ def _listComponents(engineId):
     return components
 
 
-def _listFlights(airplaneId: int):
-    return []
-
-
 def enhanceAirplane(airplane):
     # enhance the airplane by its operation indicators:
     numFlights, flightTime, operationTime = flightsDao.getAirplaneStats(airplaneId=airplane.id)
