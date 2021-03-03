@@ -284,9 +284,16 @@ def showChart(engineId: int, flightId: int):
     return render_template('chart.html', aspectRatio=16/9, chartId=1, title=title, labels=labels, units=units, datasets=datasets)
 
 
+def renderNotEnufDataErr():
+    return render_template('errorMsg.html',
+                           message="Not enuf data!<br><br>You need to gather at least 50 data points before this analysis starts making any sense.")
+
+
 @app.route('/trends/<engineId>')
 def showTrends(engineId: int):
     functions = regressionResultsDao.listFunctions(engineId=engineId)
+    if len(functions) == 0:
+        return renderNotEnufDataErr()
 
     allTitles = []
     allLabels = []
@@ -297,8 +304,7 @@ def showTrends(engineId: int):
     for fn in functions:
         df: DataFrame = regressionResultsDao.loadRegressionResultsData(engineId=engineId, function=fn)
         if len(df) < 50:
-            return render_template('errorMsg.html',
-                                   message="Not enuf data!<br><br>You need to gather at least 50 data points before this analysis starts making any sense.")
+            return renderNotEnufDataErr()
 
         # TODO -- MAGIC start --
         df['mean'] = df['delta'].mean()
