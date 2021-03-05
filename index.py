@@ -175,7 +175,7 @@ def indexAirplane(airplaneId: int):
 
     engines = _listEngines(airplaneId=airplaneId)
 
-    files = filesDao.listRawFilesForAirplane(airplaneId=airplaneId, limit=5)
+    files = filesDao.listRawFilesForAirplane(airplaneId=airplaneId, limit=10)
     totNumFiles = len(files)
 
     flights, _ = flightsDao.listForView(airplaneId=airplaneId)
@@ -252,22 +252,29 @@ def csv(type: str, id: int):
     return output
 
 
-@app.route('/chart/<engineId>/<flightId>')
-def showChart(engineId: int, flightId: int):
+@app.route('/chart/<engineId>/<what>/<whatId>')
+def showChart(engineId: int, what: str, whatId: int):
+    """
+    :param engineId:
+    :param what:  c/f - cycle/flight
+    :param whatId: cycle of flight id
+    """
     try:
         engineId = int(engineId)
-        flightId = int(flightId)
+        whatId = int(whatId)
+        assert what in ['c', 'f']
     except Exception as ex:
         print(ex)
         return render_template('errorMsg.html', message="No such data!")
 
-    flight = flightsDao.getOne(id=flightId)
+    that = flightsDao.getOne(id=whatId) if what == 'f' else cyclesDao.getOne(id=whatId)
 
-    df: DataFrame = flightRecordingDao.loadDf(engineId=engineId, startTs=flight.rec_start_ts, endTs=flight.rec_end_ts)
+    df: DataFrame = flightRecordingDao.loadDf(engineId=engineId, startTs=that.rec_start_ts, endTs=that.rec_end_ts)
     if df.empty:
         return render_template('errorMsg.html', message="No such data!")
 
-    title = f"Flight recording for engineId = {engineId}, flightId = {flightId}"
+    thatTitle = 'cycle' if what == 'c' else 'flight'
+    title = f"Flight recording for engineId = {engineId}, {thatTitle}Id = {whatId}"
 
     labels = ','.join([datetime.utcfromtimestamp(dt.astype(datetime) / 1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values])
 

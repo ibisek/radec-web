@@ -22,7 +22,7 @@
                 &nbsp;| ITTSUmax: {% if cycle.ITTSUmax %}<b>{{ "%.f"|format(cycle.ITTSUmax) }}</b>{% endif %}&deg;C
                 &nbsp;| ITTSUgrad: {% if cycle.ITTSUgrad %}<b>{{ "%.f"|format(cycle.ITTSUgrad) }}</b>{% endif %}&deg;C
                 #}
-                {% if cycle.flightId %} | <a href="/chart/{{ cycle.engine_id }}/{{ cycle.flightId }}">detail</a>{% endif %}
+                 | <a href="/chart/{{ cycle.engine_id }}/c/{{ cycle.id }}">detail</a>
             </small></span>
     </li>
     {% endfor %}

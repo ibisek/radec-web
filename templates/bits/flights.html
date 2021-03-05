@@ -27,7 +27,7 @@
                         </div>
                     <div class="col">
                         {% if flight.engineId and flight.flightId %}
-                        <a href="/chart/{{ flight.engineId }}/{{ flight.flightId }}" class="btn btn-primary">flight detail</a>
+                        <a href="/chart/{{ flight.engineId }}/f/{{ flight.flightId }}" class="btn btn-primary">flight detail</a>
                         &nbsp;
                         {% endif %}
                         {# <a href="/map/{{ flight.engineId }}/{{ flight.flightId }}/a/b" class="btn btn btn-info">map view</a> #}
@@ -37,8 +37,9 @@
             </div>
 
             <small class="text-muted">
+                flightId: {{ flight.id }}
                 {% if flight.fileName %}
-                source file: {% if flight.fileName %}{{ flight.fileName }}{% endif %}
+                &nbsp;|&nbsp;source file: {% if flight.fileName %}{{ flight.fileName }}{% endif %}
                 {% endif %}
 
                 {#id: {{ flight.id }}.{{ flight.idx }}#}
@@ -74,7 +75,7 @@
 
                 {#
                 {% if flight.engineId and flight.flightId %}
-                &nbsp;| <a href="/chart/{{ flight.engineId }}/{{ flight.flightId }}">detail</a>
+                &nbsp;| <a href="/chart/{{ flight.engineId }}/f/{{ flight.flightId }}">detail</a>
                 {% endif %}
                 #}
             </small>
