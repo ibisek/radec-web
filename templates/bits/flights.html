@@ -12,18 +12,23 @@
                 <div class="row">
                     <div class="col-4">
                     {% if flight.takeoff_ts and flight.landing_ts %}
-                        Take-off: <strong>{{ flight.takeoff_ts|tsFormat }}</strong> from <strong>LKxx</strong> <br>
-                        Landing: <strong>{{ flight.landing_ts|tsFormat }}</strong> at <strong>LKxx</strong> <br>
+                        Operation:<br>
+                        Take-off <strong>{{ flight.takeoff_ts|tsFormat }}</strong> from <strong>LKxx</strong>
+                        <br>
+                        Landing <strong>{{ flight.landing_ts|tsFormat }}</strong> at <strong>LKxx</strong>
+                        {% if flight.operation_time %}
+                        <br>
+                        Duration: <strong>{{ flight.operation_time|durationFormat }}</strong>
+                        {% endif %}
                     {% endif %}
                     </div>
-                    <div class="col-3">
-                        {% if flight.flight_time %}
-                            fligth time: <strong>{{ flight.flight_time|durationFormat }}</strong>
-                        {% endif %}
+                    <div class="col-4">
+                        Flight (block time):<br>
+                        Start {{ flight.flight_time_start|tsFormat }}
                         <br>
-                        {% if flight.operation_time %}
-                        operation time: <strong>{{ flight.operation_time|durationFormat }}</strong>
-                        {% endif %}
+                        End {{ flight.flight_time_end|tsFormat }}
+                        <br>
+                        Duration {{ flight.flight_time|durationFormat }}
                         </div>
                     <div class="col">
                         {% if flight.engineId and flight.flightId %}
