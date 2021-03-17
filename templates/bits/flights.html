@@ -13,9 +13,9 @@
                     <div class="col-4">
                     {% if flight.takeoff_ts and flight.landing_ts %}
                         Operation:<br>
-                        Take-off <strong>{{ flight.takeoff_ts|tsFormat }}</strong> from <strong>LKxx</strong>
+                        Take-off <strong>{{ flight.takeoff_ts|tsFormat }}</strong> from <strong>{{ flight.takeoff_location }}</strong>
                         <br>
-                        Landing <strong>{{ flight.landing_ts|tsFormat }}</strong> at <strong>LKxx</strong>
+                        Landing <strong>{{ flight.landing_ts|tsFormat }}</strong> at <strong>{{ flight.landing_location }}</strong>
                         {% if flight.operation_time %}
                         <br>
                         Duration: <strong>{{ flight.operation_time|durationFormat }}</strong>
