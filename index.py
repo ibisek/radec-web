@@ -306,8 +306,8 @@ def showTrends(engineId: int):
     allLabels = []
     allDatasets = []
 
-    keys = ['delta', 'mean', 'y_linreg']  # , 'y_polyreg'
-    colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 0, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
+    keys = ['delta', 'mean', 'y_linreg', 'y_rolling']  # , 'y_polyreg'
+    colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 0, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(127, 23, 231, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
     for fn in functions:
         df: DataFrame = regressionResultsDao.loadRegressionResultsData(engineId=engineId, function=fn)
         if len(df) < 50:
@@ -327,8 +327,8 @@ def showTrends(engineId: int):
         # polyreg.fit(x, y)
         # df['y_polyreg'] = polyreg.predict(x)
 
-        # df['y_rolling'] = df['delta'].rolling(10, center=True).mean()
-        # df = df.fillna(df['y_rolling'].mean())
+        df['y_rolling'] = df['delta'].rolling(10, center=True).mean()
+        df = df.fillna(df['y_rolling'].mean())
         # TODO -- MAGIC END --
 
         allTitles.append(f"{fn} for engine id {engineId}")
