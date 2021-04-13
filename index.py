@@ -53,7 +53,7 @@ def _listNotifications(limit: int = 10):
     cyclesDao = CyclesDao()
     for n in notifications:
         setattr(n, 'formattedDt', None)
-        if n.ts > 0:
+        if n.start_ts > 0:
             n.formattedDt = datetime.utcfromtimestamp(n.ts).strftime('%Y-%m-%d %H:%M')
 
         setattr(n, 'airplane', None)
