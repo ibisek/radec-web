@@ -1,1 +1,1 @@
-/home/jaja/wqz/prog/python/radec-dataAnalyser/src/data/structures.py
+/home/ibisek/wqz/prog/python/radec-dataAnalyser/src/data/structures.py
