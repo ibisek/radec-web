@@ -306,8 +306,12 @@ def showTrends(engineId: int):
     allLabels = []
     allDatasets = []
 
-    keys = ['delta', 'mean', 'y_linreg', 'y_rolling', 'trend']  # , 'y_polyreg'
-    colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 0, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(127, 23, 231, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
+    keys = ['delta', 'mean', 'y_linreg', 'y_rolling',
+            'trend',
+            'rangeMax', 'rangeMin']  # , 'y_polyreg'
+    colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 0, 0, 1)', 'rgba(127, 23, 231, 1)', 'rgba(255, 0, 255, 1)',
+              'rgba(0, 80, 0, 1)',
+              'rgba(255, 0, 0, 1)', 'rgba(255, 0, 0, 1)')
     for fn in functions:
         df: DataFrame = regressionResultsDao.loadRegressionResultsData(engineId=engineId, function=fn)
         if len(df) < 50:
@@ -336,6 +340,23 @@ def showTrends(engineId: int):
         for i in range(1, len(df)):
             df['trend'].iloc[i] = df['trend'].iloc[i - 1] + smoothingCoeff * (df['delta'].iloc[i] - df['trend'].iloc[i - 1])
         # TODO -- MAGIC END --
+
+        # Permitted ranges for series:
+        yKey = fn.split('-')[0]
+        if yKey == 'NGR':
+            val = 3
+        elif yKey == 'ITTR':
+            val = 60
+        elif yKey == 'FCR':
+            val = 20
+        else:   # 'OILT' & 'SPR' are currently not defined
+            val = None
+        if val is not None:
+            df['rangeMax'] = val
+            df['rangeMin'] = -val
+            keys = ['delta', 'mean', 'y_linreg', 'y_rolling', 'trend', 'rangeMax', 'rangeMin']  # , 'y_polyreg'
+        else:
+            keys = ['delta', 'mean', 'y_linreg', 'y_rolling', 'trend']
 
         allTitles.append(f"{fn} for engine id {engineId}")
         allLabels.append(','.join([datetime.utcfromtimestamp(dt.astype(datetime)/1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values]))
