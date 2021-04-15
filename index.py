@@ -306,7 +306,7 @@ def showTrends(engineId: int):
     allLabels = []
     allDatasets = []
 
-    keys = ['delta', 'mean', 'y_linreg', 'y_rolling']  # , 'y_polyreg'
+    keys = ['delta', 'mean', 'y_linreg', 'y_rolling', 'trend']  # , 'y_polyreg'
     colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 0, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(127, 23, 231, 1)', 'rgba(255, 0, 255, 1)', 'rgba(0, 255, 255, 1)')
     for fn in functions:
         df: DataFrame = regressionResultsDao.loadRegressionResultsData(engineId=engineId, function=fn)
@@ -329,6 +329,12 @@ def showTrends(engineId: int):
 
         df['y_rolling'] = df['delta'].rolling(10, center=True).mean()
         df = df.fillna(df['y_rolling'].mean())
+
+        # "marek/ge" smoothing algorithm:
+        smoothingCoeff = 0.1
+        df['trend'] = 0
+        for i in range(1, len(df)):
+            df['trend'].iloc[i] = df['trend'].iloc[i - 1] + smoothingCoeff * (df['delta'].iloc[i] - df['trend'].iloc[i - 1])
         # TODO -- MAGIC END --
 
         allTitles.append(f"{fn} for engine id {engineId}")
