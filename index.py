@@ -344,7 +344,7 @@ def showTrends(engineId: int):
         # Permitted ranges for series:
         yKey = fn.split('-')[0]
         if yKey == 'NGR':
-            val = 3
+            val = 2
         elif yKey == 'ITTR':
             val = 60
         elif yKey == 'FCR':
