@@ -14,7 +14,7 @@
     <script></script> <!-- bez tohoto to kdovi proc vubec nejede -->
 </head>
 
-{% macro chart(id, title, labels, datasets, aspectRatio) -%}
+{% macro chart(id, title, labels, datasets, aspectRatio, yAxisLabel, yAxisRange) -%}
     <div class="chart-container" style="position: relative; width:96vw; display: flex; flex-wrap: wrap;">
         <canvas id="chartCanvas{{ id }}" style="margin-left: 1vw;"></canvas>
     </div>
@@ -50,15 +50,32 @@
         options: {
             responsive: true,
             aspectRatio: {{ aspectRatio }},
-            /*
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: '{{ yAxisLabel }}',
+                    },
+                    {% if yAxisRange %}
+                    ticks: {
+                        min: {{ yAxisRange[0] }},
+                        max: {{ yAxisRange[1] }},
+                        {# stepSize: 10, #}
+                    },
+                    {% endif %}
+                },],
+            },
+            {#
             scales: {
                 yAxes: [
                     {% for ds in datasets %}
                     {
                     id: '{{ ds.label }}',
+                    text: 'AHOJVOLE1',
+                    label: 'AHOJVOLE2',
                     scaleLabel: {
                         display: true,
-                        labelString: '{{ ds.label }}',
+                        labelString: 'AHOJVOLE3',
                     },
                     type: 'linear',
                     {% if loop.index == 1 %}position: 'left',{% else %}position: 'right',{% endif %}
@@ -67,7 +84,7 @@
                     {% endfor %}
                 ],
             },
-            */
+            #}
             title: {
                 display: true,
                 text: '{{ title }}',
@@ -93,7 +110,7 @@
 
 {% for dataset in datasets %}
     {% set i = loop.index - 1 %}
-    {{ chart(i, titles[i], labels[i], datasets[i], aspectRatio) }}
+    {{ chart(i, titles[i], labels[i], datasets[i], aspectRatio, yAxisLabels[i], yAxisRanges[i]) }}
     <br>
 {% endfor %}
 

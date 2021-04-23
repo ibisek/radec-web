@@ -305,6 +305,8 @@ def showTrends(engineId: int):
     allTitles = []
     allLabels = []
     allDatasets = []
+    yAxisLabels = []
+    yAxisRanges = []
 
     keys = ['delta', 'mean', 'y_linreg', 'y_rolling',
             'trend',
@@ -345,12 +347,27 @@ def showTrends(engineId: int):
         yKey = fn.split('-')[0]
         if yKey == 'NGR':
             val = 2
+            yAxisLabels.append('Δ NGR [%]')
+            yAxisRanges.append((-3, 3))
         elif yKey == 'ITTR':
             val = 60
+            yAxisLabels.append('Δ ITTR [°C]')
+            yAxisRanges.append((-70, 70))
         elif yKey == 'FCR':
             val = 20
-        else:   # 'OILT' & 'SPR' are currently not defined
-            val = None
+            yAxisLabels.append('Δ FCR [kg/h]')
+            yAxisRanges.append((-25, 25))
+        elif yKey == 'OILT':
+            val = None  # currently not defined
+            yAxisLabels.append('Δ OILT [°C]')
+            yAxisRanges.append(None)
+        elif yKey == 'SPR':
+            val = None  # currently not defined
+            yAxisLabels.append('Δ SPR [W]')
+            yAxisRanges.append(None)
+        else:
+            raise NotImplementedError(f"Not implemented for yKey '{yKey}'!")
+
         if val is not None:
             df['rangeMax'] = val
             df['rangeMin'] = -val
@@ -369,7 +386,8 @@ def showTrends(engineId: int):
             datasets.append(ds)
         allDatasets.append(datasets)
 
-    return render_template('charts.html', aspectRatio=3, titles=allTitles, labels=allLabels, datasets=allDatasets)
+    return render_template('charts.html', aspectRatio=3, titles=allTitles, labels=allLabels, datasets=allDatasets,
+                           yAxisLabels=yAxisLabels, yAxisRanges=yAxisRanges)
 
 # -----------------------------------------------------------------------------
 
