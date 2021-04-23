@@ -346,15 +346,15 @@ def showTrends(engineId: int):
         # Permitted ranges for series:
         yKey = fn.split('-')[0]
         if yKey == 'NGR':
-            val = 2
+            val = 1
             yAxisLabels.append('Δ NGR [%]')
-            yAxisRanges.append((-3, 3))
+            yAxisRanges.append((-2, 2))
         elif yKey == 'ITTR':
-            val = 60
+            val = 30
             yAxisLabels.append('Δ ITTR [°C]')
-            yAxisRanges.append((-70, 70))
+            yAxisRanges.append((-60, 60))
         elif yKey == 'FCR':
-            val = 20
+            val = None
             yAxisLabels.append('Δ FCR [kg/h]')
             yAxisRanges.append((-25, 25))
         elif yKey == 'OILT':
