@@ -338,9 +338,11 @@ def showTrends(engineId: int):
 
         # "marek/ge" smoothing algorithm:
         smoothingCoeff = 0.1
-        df['trend'] = 0
-        for i in range(1, len(df)):
-            df['trend'].iloc[i] = df['trend'].iloc[i - 1] + smoothingCoeff * (df['delta'].iloc[i] - df['trend'].iloc[i - 1])
+        trend = np.zeros(len(df))
+        trend_i = 0
+        for i, delta_i in enumerate(df['delta'].values[1:], 1):
+            trend[i] = trend_i = trend_i + smoothingCoeff * (delta_i - trend_i)
+        df['trend'] = trend
         # TODO -- MAGIC END --
 
         # Permitted ranges for series:
