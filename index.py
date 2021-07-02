@@ -4,6 +4,7 @@ Created on 22. 01. 2021
 @author: ibisek
 """
 
+import json
 import numpy as np
 from flask import Flask, render_template, redirect, make_response
 from datetime import datetime
@@ -390,6 +391,22 @@ def showTrends(engineId: int):
 
     return render_template('charts.html', aspectRatio=3, titles=allTitles, labels=allLabels, datasets=allDatasets,
                            yAxisLabels=yAxisLabels, yAxisRanges=yAxisRanges)
+
+
+@app.route('/api/<what>/<forEntity>/<id>')
+def api(what: str, forEntity: str, id: int):
+    # TODO input sanity checking!!
+    if what == 'notifications' and forEntity == 'cycle':
+        notifList = []
+        notifications = notificationsDao.listNotificationsForCycle(cycleId=int(id))
+        for n in notifications:
+            notifList.append({'id': n.id, 'type': n.type, 'start_ts': n.start_ts, 'end_ts': n.end_ts,
+                         'airplane_id': n.airplane_id, 'engine_id': n.engine_id, 'cycle_id': n.cycle_id, 'flight_id': n.flight_id,
+                         'message': n.message, 'checked': n.checked})
+
+        return json.dumps(notifList)
+
+    return None
 
 # -----------------------------------------------------------------------------
 
