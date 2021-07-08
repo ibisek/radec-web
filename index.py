@@ -395,7 +395,18 @@ def showTrends(engineId: int):
 
 @app.route('/api/<what>/<forEntity>/<id>')
 def api(what: str, forEntity: str, id: int):
+    """
+    /notifications/cycle/666
+
+    :param what:
+    :param forEntity:
+    :param id:
+    :return:
+    """
     # TODO input sanity checking!!
+
+    print(f"[INFO] API call / what='{what}'; forEntity='{forEntity}'; id='{id}'")
+
     if what == 'notifications' and forEntity == 'cycle':
         notifList = []
         notifications = notificationsDao.listNotificationsForCycle(cycleId=int(id))
