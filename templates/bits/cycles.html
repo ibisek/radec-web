@@ -5,6 +5,47 @@
         <span class="badge badge-primary badge-pill" style="background-color:#084298;">{{ cycles|length }}</span>
     </a>
 
+    <script language="javascript">
+        function formatTs(ts) {
+            date = new Date(ts * 1000);
+            var month = date.getMonth()+1;
+            var day = date.getDate();
+            var hour = date.getHours();
+            var min = date.getMinutes();
+            var sec = date.getSeconds();
+
+            const zeroPad = (num, places) => String(num).padStart(places, '0');
+
+            return date.getFullYear() + "-" + zeroPad(month, 2) + "-" + zeroPad(day, 2) + " " + zeroPad(hour, 2) + ":" + zeroPad(min, 2) + ":" + zeroPad(sec, 2);
+        }
+
+        function toggleNotificationsView(cycleId) {
+            var notificationsElement = document.getElementById('notifications'+cycleId);
+            if (notificationsElement.style.display == "none") {
+                var request = new XMLHttpRequest();
+                request.open('GET', 'http://127.0.0.1:5000/api/notifications/cycle/'+cycleId, true);
+                request.onload = function () {
+                    var data = JSON.parse(this.response);
+                    if (data.length > 0) {
+                        var html = "";
+                        data.forEach((notification) => {
+                          html += "<small>" + formatTs(notification.start_ts) + " &rarr; " + formatTs(notification.end_ts) + ":</small>&nbsp;" + notification.message + "<br>";
+                        });
+
+                        var element = document.getElementById('notification'+cycleId);
+                        element.innerHTML = html;
+
+                        notificationsElement.style.display = "block";
+                    }
+                }
+                request.send()
+
+            } else {
+                notificationsElement.style.display = "none";
+            }
+        }
+    </script>
+
     {% for cycle in cycles %}
     <li class="list-group-item d-flex justify-content-between align-items-center">
         <span>{{ cycle.fileName }}&emsp;
@@ -22,8 +63,15 @@
                 &nbsp;| ITTSUmax: {% if cycle.ITTSUmax %}<b>{{ "%.f"|format(cycle.ITTSUmax) }}</b>{% endif %}&deg;C
                 &nbsp;| ITTSUgrad: {% if cycle.ITTSUgrad %}<b>{{ "%.f"|format(cycle.ITTSUgrad) }}</b>{% endif %}&deg;C
                 #}
-                 | <a href="/chart/{{ cycle.engine_id }}/c/{{ cycle.id }}">detail</a>
-            </small></span>
+                 | <a href="/chart/{{ cycle.engine_id }}/c/{{ cycle.id }}">flight chart</a>
+                 | <span class="badge badge-primary badge-pill" style="background-color: #117a8b; cursor: pointer;" onclick="toggleNotificationsView({{ cycle.id }})">Notifications</span>
+            </small>
+            <div class="card" id="notifications{{ cycle.id }}" style="margin-top:10px;display:none;">
+                <div class="card-body" id="notification{{ cycle.id }}">
+                    Loading..
+                </div>
+            </div>
+        </span>
     </li>
     {% endfor %}
 </ul>
