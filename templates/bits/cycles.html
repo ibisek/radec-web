@@ -6,6 +6,20 @@
     </a>
 
     <script language="javascript">
+        function toggleNotification(notificationId) {
+            // TODO toggle notification check via API
+
+            var e = document.getElementById('notification'+notificationId);
+            var bgColor = e.style.backgroundColor;
+            if(bgColor == 'green') {
+                e.style.backgroundColor = 'orange';
+                e.innerHTML = 'Pending';
+            } else {
+                e.style.backgroundColor = 'green';
+                e.innerHTML = 'Checked';
+            }
+        }
+
         function formatTs(ts) {
             date = new Date(ts * 1000);
             var month = date.getMonth()+1;
@@ -29,7 +43,14 @@
                     if (data.length > 0) {
                         var html = "";
                         data.forEach((notification) => {
-                          html += "<small>" + formatTs(notification.start_ts) + " &rarr; " + formatTs(notification.end_ts) + ":</small>&nbsp;" + notification.message + "<br>";
+                            var color = 'green';
+                            var status = 'Checked';
+                            if(!notification.checked) {
+                                color = 'orange';
+                                status = 'Pending';
+                            }
+                            html += '<span class="badge badge-primary badge-pill" style="background-color:' + color + ';cursor: pointer;" onClick="toggleNotification(' +notification.id+ ');" id="notification'+notification.id+'">' + status + '</span>&nbsp;'
+                                 + "<small>" + formatTs(notification.start_ts) + " &rarr; " + formatTs(notification.end_ts) + ":</small>&nbsp;" + notification.message + '<br>';
                         });
 
                         var element = document.getElementById('notification'+cycleId);
