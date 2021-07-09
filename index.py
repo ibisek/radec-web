@@ -403,7 +403,9 @@ def api(what: str, forEntity: str, id: int):
     :param id:
     :return:
     """
-    # TODO input sanity checking!!
+    what = _saninitise(what)
+    forEntity = _saninitise(forEntity)
+    id = _saninitise(id)
 
     print(f"[INFO] API call / what='{what}'; forEntity='{forEntity}'; id='{id}'")
 
@@ -418,6 +420,14 @@ def api(what: str, forEntity: str, id: int):
         return json.dumps(notifList)
 
     return None
+
+
+def _saninitise(s):
+    if s:
+        return s.replace('\\', '').replace(';', '').replace('\'', '').replace('--', '').replace('"', '').strip()
+    else:
+        return None
+
 
 # -----------------------------------------------------------------------------
 
