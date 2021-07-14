@@ -95,8 +95,10 @@ def _listAirplanes(airplaneId: int = None):
         eq = equipmentDao.getOne(id=airplane.equipment_id)
         if eq:
             setattr(airplane, 'type', eq.label)
+            setattr(airplane, 'model', eq.model)
         else:
             setattr(airplane, 'type', None)
+            setattr(airplane, 'model', None)
 
         numNotifications = notificationsDao.countNotificationsFor(airplaneId=airplane.id)
         setattr(airplane, 'numNotifications', numNotifications)
