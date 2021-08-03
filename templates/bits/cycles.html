@@ -49,7 +49,45 @@
                                 color = 'orange';
                                 status = 'Pending';
                             }
-                            html += '<span class="badge badge-primary badge-pill" style="background-color:' + color + ';cursor: pointer;" onClick="toggleNotification(' +notification.id+ ');" id="notification'+notification.id+'">' + status + '</span>&nbsp;'
+
+                            var notifType = '';
+                            var notifColor = '';
+                            var notifHint = '';
+                            switch(notification.type) {
+                                case 1:
+                                    notifType = 'i';
+                                    notifColor = 'green';
+                                    break;
+                                case 3:
+                                    notifType = '⍖';
+                                    notifColor = 'orange';
+                                    notifHint = 'value below limit';
+                                    break;
+                                case 4:
+                                    notifType = '⍏';
+                                    notifColor = 'orange';
+                                    notifHint = 'value above limit';
+                                    break;
+                                case 5:
+                                    notifType = '⌿';
+                                    notifColor = 'orange';
+                                    notifHint = 'value out of range';
+                                    break;
+                                case 254:
+                                    notifType = 'WARNING';
+                                    notifColor = 'crimson';
+                                    break;
+                                case 5:
+                                    notifType = 'URGENT';
+                                    notifColor = 'crimson';
+                                    break;
+                                default:
+                                    notifType = 'UNDEF';
+                                    notifColor = '#007bff';
+                            }
+                            var notifElement = '<span class="badge badge-primary badge-pill" style="background-color:'+notifColor+'" data-toggle="tooltip" title="'+notifHint+'">'+notifType+'</span>&nbsp;';
+
+                            html += notifElement + '<span class="badge badge-primary badge-pill" style="background-color:' + color + ';cursor: pointer;" onClick="toggleNotification(' +notification.id+ ');" id="notification'+notification.id+'">' + status + '</span>&nbsp;'
                                  + "<small>" + formatTs(notification.start_ts) + " &rarr; " + formatTs(notification.end_ts) + ":</small>&nbsp;" + notification.message + '<br>';
                         });
 
