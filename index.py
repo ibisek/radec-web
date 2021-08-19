@@ -16,7 +16,7 @@ from sklearn.pipeline import make_pipeline
 
 from configuration import DEBUG
 from customFilters import tsFormat, durationFormat
-from data.structures import FileFormat
+from data.structures import FileFormat, EngineType
 from db.dao import flightRecordingDao
 from db.dao.airplanesDao import AirplanesDao
 from db.dao.equipmentDao import EquipmentDao
@@ -281,10 +281,24 @@ def showChart(engineId: int, what: str, whatId: int):
 
     labels = ','.join([datetime.utcfromtimestamp(dt.astype(datetime) / 1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values])
 
-    iasKey = 'IAS' if 'IAS' in df.keys() else 'TAS'
-    keys = ('ALT', iasKey, 'ITT', 'T0', 'NG', 'NP')
-    colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(252, 160, 3, 1)', 'rgba(0, 255, 255, 1)', 'rgba(255, 0, 255, 1)')
-    units = ('m', 'km/h', '°C', '°C', '%', '1/min')
+    engine = enginesDao.getOne(id=engineId)
+    engineType: EngineType = EnginesDao().getEngineType(engine)
+
+    if engineType in (EngineType.turboprop, EngineType.H80, EngineType.P6A, EngineType.P6B) :
+        iasKey = 'IAS' if 'IAS' in df.keys() else 'TAS'
+        keys = ('ALT', iasKey, 'ITT', 'T0', 'NG', 'NP')
+        colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(252, 160, 3, 1)', 'rgba(0, 255, 255, 1)', 'rgba(255, 0, 255, 1)')
+        units = ('m', 'km/h', '°C', '°C', '%', '1/min')
+    elif engineType == EngineType.piston:
+        iasKey = 'IAS' if 'IAS' in df.keys() else 'TAS'
+        keys = ('ALT', iasKey, 'RPM', 'OAT', 'MAP', 'FUELP')
+        colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(252, 160, 3, 1)', 'rgba(0, 255, 255, 1)', 'rgba(255, 0, 255, 1)')
+        units = ('m', 'km/h', '1/min', '°C', 'Pa', 'Pa')
+    else:
+        msg = f"Unsupported engine type: '{str(engineType)}'"
+        print(f"[ERROR] {msg}")
+        return render_template('errorMsg.html', message=msg)
+
     datasets = []
     for color, key, unit in zip(colors, keys, units):
         data = ','.join([f'{float(a):.0f}' for a in df[key].values])
