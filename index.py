@@ -289,11 +289,11 @@ def showChart(engineId: int, what: str, whatId: int):
         keys = ('ALT', iasKey, 'ITT', 'T0', 'NG', 'NP')
         colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(252, 160, 3, 1)', 'rgba(0, 255, 255, 1)', 'rgba(255, 0, 255, 1)')
         units = ('m', 'km/h', '°C', '°C', '%', '1/min')
-    elif engineType == EngineType.piston:
+    elif engineType == EngineType.piston:   # ['ALT', 'ALTGPS', 'FIRE', 'FUELF', 'FUELP', 'GS', 'HDG', 'IAS', 'LAT', 'LON', 'OAT', 'OILP', 'OILT', 'P0', 'P2', 'PT', 'RPM', 'T0', 'T2', 'TAS', 'TRK', 'ts']
         iasKey = 'IAS' if 'IAS' in df.keys() else 'TAS'
-        keys = ('ALT', iasKey, 'RPM', 'OAT', 'MAP', 'FUELP')
+        keys = ('ALT', iasKey, 'RPM', 'OAT', 'OILT', 'FUELF')
         colors = ('rgba(0, 0, 255, 1)', 'rgba(0, 255, 0, 1)', 'rgba(255, 0, 0, 1)', 'rgba(252, 160, 3, 1)', 'rgba(0, 255, 255, 1)', 'rgba(255, 0, 255, 1)')
-        units = ('m', 'km/h', '1/min', '°C', 'Pa', 'Pa')
+        units = ('m', 'km/h', '1/min', '°C', '°C', 'l/h')
     else:
         msg = f"Unsupported engine type: '{str(engineType)}'"
         print(f"[ERROR] {msg}")
