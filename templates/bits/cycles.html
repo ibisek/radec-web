@@ -123,7 +123,14 @@
                 &nbsp;| ITTSUgrad: {% if cycle.ITTSUgrad %}<b>{{ "%.f"|format(cycle.ITTSUgrad) }}</b>{% endif %}&deg;C
                 #}
                  | <a href="/chart/{{ cycle.engine_id }}/c/{{ cycle.id }}">flight chart</a>
-                 | <span class="badge badge-primary badge-pill" style="background-color: #117a8b; cursor: pointer;" onclick="toggleNotificationsView({{ cycle.id }})">Notifications</span>
+                {% if cycle.notificationOverview %}
+                 | <span class="badge badge-primary badge-pill"
+                         style="background-color: {% if cycle.notificationOverview.numUnchecked > 0 %}orange{% else %}#f8f9fa{% endif %};; cursor: pointer;"
+                         data-toggle="tooltip" data-placement="top" title="Info/Warning/Urgent"
+                         onclick="toggleNotificationsView({{ cycle.id }})">
+                        Notifications {% if cycle.notificationOverview %}({{cycle.notificationOverview.infoCount}}/{{cycle.notificationOverview.warnCount}}/{{cycle.notificationOverview.urgentCount}}){% endif %}
+                   </span>
+                {% endif %}
             </small>
             <div class="card" id="notifications{{ cycle.id }}" style="margin-top:10px;display:none;">
                 <div class="card-body" id="notification{{ cycle.id }}">
