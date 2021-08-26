@@ -21,7 +21,7 @@
         }
 
         function formatTs(ts) {
-            date = new Date(ts * 1000);
+            date = new Date(ts * 1000); // to webbrowser's local TZ
             var month = date.getMonth()+1;
             var day = date.getDate();
             var hour = date.getHours();
@@ -88,7 +88,7 @@
                             var notifElement = '<span class="badge badge-primary badge-pill" style="background-color:'+notifColor+'" data-toggle="tooltip" title="'+notifHint+'">'+notifType+'</span>&nbsp;';
 
                             html += notifElement + '<span class="badge badge-primary badge-pill" style="background-color:' + color + ';cursor: pointer;" onClick="toggleNotification(' +notification.id+ ');" id="notification'+notification.id+'">' + status + '</span>&nbsp;'
-                                 + "<small>" + formatTs(notification.start_ts) + " &rarr; " + formatTs(notification.end_ts) + ":</small>&nbsp;" + notification.message + '<br>';
+                                 + "<small>" + notification.start_ts_str + " &rarr; " + notification.end_ts_str + ":</small>&nbsp;" + notification.message + '<br>';
                         });
 
                         var element = document.getElementById('notification'+cycleId);

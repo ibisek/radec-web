@@ -429,7 +429,12 @@ def api(what: str, forEntity: str, id: int):
         notifList = []
         notifications = notificationsDao.listNotificationsForCycle(cycleId=int(id))
         for n in notifications:
+            from datetime import datetime
+            startTsStr = datetime.utcfromtimestamp(n.start_ts).strftime("%Y-%d-%m %H:%M")
+            endTsStr = datetime.utcfromtimestamp(n.end_ts).strftime("%Y-%d-%m %H:%M")
+
             notifList.append({'id': n.id, 'type': n.type, 'start_ts': n.start_ts, 'end_ts': n.end_ts,
+                         'start_ts_str': startTsStr, 'end_ts_str': endTsStr,
                          'airplane_id': n.airplane_id, 'engine_id': n.engine_id, 'cycle_id': n.cycle_id, 'flight_id': n.flight_id,
                          'message': n.message, 'checked': n.checked})
 
