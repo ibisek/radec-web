@@ -7,21 +7,22 @@
 
     <script language="javascript">
         function toggleNotification(notificationId) {
-            // TODO toggle notification check via API
-
             var e = document.getElementById('notification'+notificationId);
             var bgColor = e.style.backgroundColor;
             if(bgColor == 'green') {
-                e.style.backgroundColor = 'orange';
-                e.innerHTML = 'Pending';
+                //e.style.backgroundColor = 'orange';
+                //e.innerHTML = 'Pending';
             } else {
                 e.style.backgroundColor = 'green';
                 e.innerHTML = 'Checked';
+                var request = new XMLHttpRequest();
+                request.open('GET', '/api/notifications/notification/'+notificationId);
+                request.send();
             }
         }
 
         function formatTs(ts) {
-            date = new Date(ts * 1000); // to webbrowser's local TZ
+            date = new Date(ts * 1000); // to web browser's local TZ
             var month = date.getMonth()+1;
             var day = date.getDate();
             var hour = date.getHours();
@@ -125,7 +126,7 @@
                  | <a href="/chart/{{ cycle.engine_id }}/c/{{ cycle.id }}">flight chart</a>
                 {% if cycle.notificationOverview %}
                  | <span class="badge badge-primary badge-pill"
-                         style="background-color: {% if cycle.notificationOverview.numUnchecked > 0 %}orange{% else %}#f8f9fa{% endif %};; cursor: pointer;"
+                         style="background-color: {% if cycle.notificationOverview.numUnchecked > 0 %}orange{% else %}green{% endif %};; cursor: pointer;"
                          data-toggle="tooltip" data-placement="top" title="Info/Warning/Urgent"
                          onclick="toggleNotificationsView({{ cycle.id }})">
                         Notifications {% if cycle.notificationOverview %}({{cycle.notificationOverview.infoCount}}/{{cycle.notificationOverview.warnCount}}/{{cycle.notificationOverview.urgentCount}}){% endif %}
