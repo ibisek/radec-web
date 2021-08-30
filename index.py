@@ -413,6 +413,7 @@ def showTrends(engineId: int):
 def api(what: str, forEntity: str, id: int):
     """
     /notifications/cycle/666
+    /notifications/notification/555
 
     :param what:
     :param forEntity:
@@ -421,24 +422,30 @@ def api(what: str, forEntity: str, id: int):
     """
     what = _saninitise(what)
     forEntity = _saninitise(forEntity)
-    id = _saninitise(id)
+    id = int(_saninitise(id))
 
     print(f"[INFO] API call / what='{what}'; forEntity='{forEntity}'; id='{id}'")
 
-    if what == 'notifications' and forEntity == 'cycle':
-        notifList = []
-        notifications = notificationsDao.listNotificationsForCycle(cycleId=int(id))
-        for n in notifications:
-            from datetime import datetime
-            startTsStr = datetime.utcfromtimestamp(n.start_ts).strftime("%Y-%d-%m %H:%M")
-            endTsStr = datetime.utcfromtimestamp(n.end_ts).strftime("%Y-%d-%m %H:%M")
+    if what == 'notifications':
+        if forEntity == 'cycle':
+            notifList = []
+            notifications = notificationsDao.listNotificationsForCycle(cycleId=int(id))
+            for n in notifications:
+                from datetime import datetime
+                startTsStr = datetime.utcfromtimestamp(n.start_ts).strftime("%Y-%d-%m %H:%M")
+                endTsStr = datetime.utcfromtimestamp(n.end_ts).strftime("%Y-%d-%m %H:%M")
 
-            notifList.append({'id': n.id, 'type': n.type, 'start_ts': n.start_ts, 'end_ts': n.end_ts,
-                         'start_ts_str': startTsStr, 'end_ts_str': endTsStr,
-                         'airplane_id': n.airplane_id, 'engine_id': n.engine_id, 'cycle_id': n.cycle_id, 'flight_id': n.flight_id,
-                         'message': n.message, 'checked': n.checked})
+                notifList.append({'id': n.id, 'type': n.type, 'start_ts': n.start_ts, 'end_ts': n.end_ts,
+                             'start_ts_str': startTsStr, 'end_ts_str': endTsStr,
+                             'airplane_id': n.airplane_id, 'engine_id': n.engine_id, 'cycle_id': n.cycle_id, 'flight_id': n.flight_id,
+                             'message': n.message, 'checked': n.checked})
 
-        return json.dumps(notifList)
+            return json.dumps(notifList)
+
+        elif forEntity == 'notification':   # toggle notification checked
+            notification = notificationsDao.getOne(id=id)
+            notification.checked = not notification.checked
+            notificationsDao.save(notification)
 
     return None
 
