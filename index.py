@@ -395,7 +395,7 @@ def showTrends(engineId: int):
             keys = ['delta', 'mean', 'y_linreg', 'y_rolling', 'trend']
 
         allTitles.append(f"{fn} for engine id {engineId}")
-        allLabels.append(','.join([datetime.utcfromtimestamp(dt.astype(datetime)/1e9).strftime('"%Y-%m-%d %H:%M"') for dt in df.index.values]))
+        allLabels.append(','.join([datetime.utcfromtimestamp(dt.astype(datetime)/1e9).strftime('"%Y-%m-%d"') for dt in df.index.values]))
 
         datasets = []
         for color, key in zip(colors, keys):
