@@ -271,10 +271,12 @@ def showChart(engineId: int, what: str, whatId: int):
         return render_template('errorMsg.html', message="No such data!")
 
     that = flightsDao.getOne(id=whatId) if what == 'f' else cyclesDao.getOne(id=whatId)
+    if not that:
+        return render_template('errorMsg.html', message="No such data! (1)")
 
     df: DataFrame = flightRecordingDao.loadDf(engineId=engineId, startTs=that.rec_start_ts, endTs=that.rec_end_ts)
     if df.empty:
-        return render_template('errorMsg.html', message="No such data!")
+        return render_template('errorMsg.html', message="No such data! (2)")
 
     thatTitle = 'cycle' if what == 'c' else 'flight'
     title = f"Flight recording for engineId = {engineId}, {thatTitle}Id = {whatId}"
