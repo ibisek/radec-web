@@ -4,9 +4,10 @@ Created on 22. 01. 2021
 @author: ibisek
 """
 
+import os
 import json
 import numpy as np
-from flask import Flask, render_template, redirect, make_response
+from flask import Flask, render_template, redirect, make_response, send_from_directory
 from datetime import datetime
 from pandas import DataFrame
 from collections import namedtuple
@@ -218,7 +219,10 @@ def indexEngine(engineId: int):
     # notifications = _listNotifications(engineId=engineId)
     notifications = None
 
-    menuItems = [{'text': 'Trend monitoring', 'link': f'/trends/{engineId}'}]
+    menuItems = [
+        {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
+        {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+    ]
 
     return render_template('index.html', menuItems=menuItems,
                            airplanes=[airplane], engines=[engine], components=components,
@@ -409,6 +413,15 @@ def showTrends(engineId: int):
 
     return render_template('charts.html', aspectRatio=3, titles=allTitles, labels=allLabels, datasets=allDatasets,
                            yAxisLabels=yAxisLabels, yAxisRanges=yAxisRanges)
+
+
+@app.route('/fuelMap/<engineId>')
+def showFuelMap(engineId: int):
+    menuItems = [
+        {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
+    ]
+
+    return render_template('fuelMap.html', engineId=engineId, menuItems=menuItems)
 
 
 @app.route('/api/<what>/<forEntity>/<id>')
