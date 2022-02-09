@@ -411,13 +411,20 @@ def showTrends(engineId: int):
             datasets.append(ds)
         allDatasets.append(datasets)
 
+    menuItems = [
+        {'text': 'Engine details', 'link': f'/engine/{engineId}'},
+        {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+    ]
+
     return render_template('charts.html', aspectRatio=3, titles=allTitles, labels=allLabels, datasets=allDatasets,
-                           yAxisLabels=yAxisLabels, yAxisRanges=yAxisRanges)
+                           yAxisLabels=yAxisLabels, yAxisRanges=yAxisRanges,
+                           menuItems=menuItems)
 
 
 @app.route('/fuelMap/<engineId>')
 def showFuelMap(engineId: int):
     menuItems = [
+        {'text': 'Engine details', 'link': f'/engine/{engineId}'},
         {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
     ]
 
@@ -502,6 +509,14 @@ def _saninitise(s):
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/img'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
+@app.errorhandler(400)
+@app.errorhandler(404)
+@app.errorhandler(405)  # method not allowed
+@app.errorhandler(413)
+def handle_error(error):
+    return render_template("errorMsg.html", code=error.code, message=error.description, noHeader=True)
 
 
 if __name__ == '__main__':
