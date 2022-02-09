@@ -12,8 +12,9 @@
 </head>
 <body>
 
-{% include 'header.html' ignore missing %}
-
+{% if noHeader is not defined or noHeader==False %}
+    {% include 'header.html' ignore missing %}
+{% endif %}
 
 <div style="display:block;position:absolute;left:33vw;width:33vw;height:100vh;text-align: center;">
     <div style="margin: 0; position: absolute; top: 50%; -ms-transform: translateY(-65%); transform: translateY(-65%);">
