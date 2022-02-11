@@ -310,7 +310,7 @@ def showChart(engineId: int, what: str, whatId: int):
 
     datasets = []
     for color, key, unit in zip(colors, keys, units):
-        data = ','.join([f'{float(a):.0f}' for a in df[key].values])
+        data = ','.join([f'{float(a):.1f}' for a in df[key].values])
         ds = Dataset(label=key, unit=unit, data=data, color=color)
         datasets.append(ds)
 
