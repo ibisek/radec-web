@@ -222,6 +222,7 @@ def indexEngine(engineId: int):
     menuItems = [
         {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
         {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
     ]
 
     return render_template('index.html', menuItems=menuItems,
@@ -417,6 +418,7 @@ def showTrends(engineId: int):
     menuItems = [
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
         {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
     ]
 
     return render_template('charts.html', aspectRatio=3, titles=allTitles, labels=allLabels, datasets=allDatasets,
@@ -429,9 +431,21 @@ def showFuelMap(engineId: int):
     menuItems = [
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
         {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
+        {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
     ]
 
     return render_template('fuelMap.html', engineId=engineId, menuItems=menuItems)
+
+
+@app.route('/ssDistribution/<engineId>')
+def showSSDistribution(engineId: int):
+    menuItems = [
+        {'text': 'Engine details', 'link': f'/engine/{engineId}'},
+        {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
+        {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+    ]
+
+    return render_template('ssDistribution.html', engineId=engineId, menuItems=menuItems)
 
 
 @app.route('/api/<what>/<forEntity>/<id>')
