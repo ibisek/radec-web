@@ -29,6 +29,7 @@ from db.dao.cyclesDao import CyclesDao
 from db.dao.componentsDao import ComponentsDao
 from db.dao.flightRecordingDao import FlightRecordingDao
 from db.dao.regressionResultsDao import RegressionResultsDao
+from db.dao.trendsDao import TrendsDao
 
 Dataset = namedtuple('Dataset', ['label', 'unit', 'data', 'color'])
 
@@ -414,6 +415,17 @@ def showTrends(engineId: int):
             ds = Dataset(label=key, unit=unit, data=data, color=color)
             datasets.append(ds)
         allDatasets.append(datasets)
+
+    # the other kind of trends:
+    trendsDao = TrendsDao()
+    ittTrends = [t for t in trendsDao.get(engine_id=engineId, channel='ITT')]
+    data = ','.join([f"{trend.value:.2f}" for trend in ittTrends])
+    ds = Dataset(label='ITT', unit='', data=data, color=colors[0])
+    allDatasets.append([ds])
+    allLabels.append(','.join([datetime.utcfromtimestamp(trend.ts).strftime('"%Y-%m-%d"') for trend in ittTrends]))
+    allTitles.append(f"Peak ITT during take-off for engine id {engineId}")
+    yAxisLabels.append('ITT [°C]')
+    yAxisRanges.append(None)
 
     menuItems = [
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
