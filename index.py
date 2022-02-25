@@ -421,9 +421,23 @@ def showTrends(engineId: int):
     channels = ['ITT', 'ITTR']
     for channel in channels:
         trends = [t for t in trendsDao.get(engine_id=engineId, channel=channel)]
-        data = ','.join([f"{trend.value:.2f}" for trend in trends])
-        ds = Dataset(label=channel, unit='', data=data, color=colors[0])
-        allDatasets.append([ds])
+        # --
+        df = DataFrame([t.value for t in trends], columns=[channel])
+        df['mean'] = df[channel].mean()
+        df['y_rolling'] = df[channel].rolling(20, center=True).mean()
+        df = df.fillna(df['y_rolling'].mean())
+
+        keys = [channel, 'mean', 'y_rolling']
+        datasets = []
+        for color, key in zip(colors, keys):
+            data = ','.join([f'{float(a):.2f}' for a in df[key].values])
+            ds = Dataset(label=key, unit='', data=data, color=color)
+            datasets.append(ds)
+        allDatasets.append(datasets)
+        # --
+        # data = ','.join([f"{trend.value:.2f}" for trend in trends])
+        # ds = Dataset(label=channel, unit='', data=data, color=colors[0])
+        # allDatasets.append([ds])
         allLabels.append(','.join([datetime.utcfromtimestamp(trend.ts).strftime('"%Y-%m-%d"') for trend in trends]))
         allTitles.append(f"Peak {channel} during take-off for engine id {engineId}")
         yAxisLabels.append(f'{channel} [°C]')
