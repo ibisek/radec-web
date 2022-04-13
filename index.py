@@ -223,6 +223,7 @@ def indexEngine(engineId: int):
     menuItems = [
         {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
         {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Torque map', 'link': f'/torqueMap/{engineId}'},
         {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
     ]
 
@@ -446,6 +447,7 @@ def showTrends(engineId: int):
     menuItems = [
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
         {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Torque map', 'link': f'/torqueMap/{engineId}'},
         {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
     ]
 
@@ -458,11 +460,24 @@ def showTrends(engineId: int):
 def showFuelMap(engineId: int):
     menuItems = [
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
+        {'text': 'Torque map', 'link': f'/torqueMap/{engineId}'},
         {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
         {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
     ]
 
     return render_template('fuelMap.html', engineId=engineId, menuItems=menuItems)
+
+
+@app.route('/torqueMap/<engineId>')
+def showTorqueMap(engineId: int):
+    menuItems = [
+        {'text': 'Engine details', 'link': f'/engine/{engineId}'},
+        {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
+        {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
+    ]
+
+    return render_template('torqueMap.html', engineId=engineId, menuItems=menuItems)
 
 
 @app.route('/ssDistribution/<engineId>')
@@ -471,6 +486,7 @@ def showSSDistribution(engineId: int):
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
         {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
         {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Torque map', 'link': f'/torqueMap/{engineId}'},
     ]
 
     return render_template('ssDistribution.html', engineId=engineId, menuItems=menuItems)
