@@ -7,6 +7,7 @@ Created on 22. 01. 2021
 import os
 import json
 import numpy as np
+import pandas as pd
 from flask import Flask, render_template, redirect, make_response, send_from_directory
 from datetime import datetime
 from pandas import DataFrame
@@ -17,7 +18,7 @@ from sklearn.pipeline import make_pipeline
 
 from configuration import DEBUG
 from customFilters import tsFormat, durationFormat
-from data.structures import FileFormat, EngineType
+from data.structures import FileFormat, EngineType, ChartAnnotation
 from db.dao import flightRecordingDao
 from db.dao.airplanesDao import AirplanesDao
 from db.dao.equipmentDao import EquipmentDao
@@ -30,6 +31,7 @@ from db.dao.componentsDao import ComponentsDao
 from db.dao.flightRecordingDao import FlightRecordingDao
 from db.dao.regressionResultsDao import RegressionResultsDao
 from db.dao.trendsDao import TrendsDao
+from db.dao.maintenanceRecordsDao import MaintenanceRecordsDao
 
 Dataset = namedtuple('Dataset', ['label', 'unit', 'data', 'color'])
 
@@ -331,6 +333,9 @@ def showTrends(engineId: int):
     if len(functions) == 0:
         return renderNotEnufDataErr()
 
+    # TODO TEMP XXX REMOVE
+    # functions = [functions[0]]
+
     allTitles = []
     allLabels = []
     allDatasets = []
@@ -418,31 +423,45 @@ def showTrends(engineId: int):
         allDatasets.append(datasets)
 
     # the other kind of trends:
-    trendsDao = TrendsDao()
-    channels = ['ITT', 'ITTR']
-    for channel in channels:
-        trends = [t for t in trendsDao.get(engine_id=engineId, channel=channel)]
-        # --
-        df = DataFrame([t.value for t in trends], columns=[channel])
-        df['mean'] = df[channel].mean()
-        df['y_rolling'] = df[channel].rolling(20, center=True).mean()
-        df = df.fillna(df['y_rolling'].mean())
+    # TODO XXX UNCOMMENT!!
+    # trendsDao = TrendsDao()
+    # channels = ['ITT', 'ITTR']
+    # for channel in channels:
+    #     trends = [t for t in trendsDao.get(engine_id=engineId, channel=channel)]
+    #     # --
+    #     df = DataFrame([t.value for t in trends], columns=[channel])
+    #     df['mean'] = df[channel].mean()
+    #     df['y_rolling'] = df[channel].rolling(20, center=True).mean()
+    #     df = df.fillna(df['y_rolling'].mean())
+    #
+    #     keys = [channel, 'mean', 'y_rolling']
+    #     datasets = []
+    #     for color, key in zip(colors, keys):
+    #         data = ','.join([f'{float(a):.2f}' for a in df[key].values])
+    #         ds = Dataset(label=key, unit='', data=data, color=color)
+    #         datasets.append(ds)
+    #     allDatasets.append(datasets)
+    #     # --
+    #     # data = ','.join([f"{trend.value:.2f}" for trend in trends])
+    #     # ds = Dataset(label=channel, unit='', data=data, color=colors[0])
+    #     # allDatasets.append([ds])
+    #     allLabels.append(','.join([datetime.utcfromtimestamp(trend.ts).strftime('"%Y-%m-%d"') for trend in trends]))
+    #     allTitles.append(f"Peak {channel} during take-off for engine id {engineId}")
+    #     yAxisLabels.append(f'{channel} [°C]')
+    #     yAxisRanges.append(None)
 
-        keys = [channel, 'mean', 'y_rolling']
-        datasets = []
-        for color, key in zip(colors, keys):
-            data = ','.join([f'{float(a):.2f}' for a in df[key].values])
-            ds = Dataset(label=key, unit='', data=data, color=color)
-            datasets.append(ds)
-        allDatasets.append(datasets)
-        # --
-        # data = ','.join([f"{trend.value:.2f}" for trend in trends])
-        # ds = Dataset(label=channel, unit='', data=data, color=colors[0])
-        # allDatasets.append([ds])
-        allLabels.append(','.join([datetime.utcfromtimestamp(trend.ts).strftime('"%Y-%m-%d"') for trend in trends]))
-        allTitles.append(f"Peak {channel} during take-off for engine id {engineId}")
-        yAxisLabels.append(f'{channel} [°C]')
-        yAxisRanges.append(None)
+    # Show number of maintenance records as number in chart annotations:
+    annotations = []
+    records = MaintenanceRecordsDao().listRecords(engineId=engineId)
+    d = MaintenanceRecordsDao.groupByDate(records)
+    for date, recs in d.items():
+        idx = None
+        for idx, dt in enumerate(df.index.values):  # Find current date in the list of 'labels' - search for the 'x' value index (in fact)
+            if pd.to_datetime(dt) > date:
+                break
+
+        text = "<br>".join([f"{str(rec.date)} {rec.severity} {rec.text}" for rec in recs])
+        annotations.append(ChartAnnotation(value=idx, text=f"{str(date)} ({len(recs)})", meta=text))
 
     menuItems = [
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
@@ -452,7 +471,7 @@ def showTrends(engineId: int):
     ]
 
     return render_template('charts.html', aspectRatio=3, titles=allTitles, labels=allLabels, datasets=allDatasets,
-                           yAxisLabels=yAxisLabels, yAxisRanges=yAxisRanges,
+                           yAxisLabels=yAxisLabels, yAxisRanges=yAxisRanges, annotations=annotations,
                            menuItems=menuItems)
 
 
