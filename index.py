@@ -224,7 +224,8 @@ def indexEngine(engineId: int):
 
     menuItems = [
         {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
-        {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Fuel map #1', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Fuel map #2', 'link': f'/fuelMap/{engineId}/2'},
         {'text': 'Torque map', 'link': f'/torqueMap/{engineId}'},
         {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
     ]
@@ -465,7 +466,8 @@ def showTrends(engineId: int):
 
     menuItems = [
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
-        {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Fuel map #1', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Fuel map #2', 'link': f'/fuelMap/{engineId}/2'},
         {'text': 'Torque map', 'link': f'/torqueMap/{engineId}'},
         {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
     ]
@@ -475,23 +477,27 @@ def showTrends(engineId: int):
                            menuItems=menuItems)
 
 
-@app.route('/fuelMap/<engineId>')
-def showFuelMap(engineId: int):
+@app.route('/fuelMap/<engineId>', defaults={'mapIndex': 1})
+@app.route('/fuelMap/<engineId>/<mapIndex>')
+def showFuelMap(engineId: int, mapIndex: int = 1):
     menuItems = [
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
+        {'text': 'Fuel map #1', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Fuel map #2', 'link': f'/fuelMap/{engineId}/2'},
         {'text': 'Torque map', 'link': f'/torqueMap/{engineId}'},
         {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
         {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
     ]
 
-    return render_template('fuelMap.html', engineId=engineId, menuItems=menuItems)
+    return render_template('fuelMap.html', engineId=engineId, mapIndex=mapIndex, menuItems=menuItems)
 
 
 @app.route('/torqueMap/<engineId>')
 def showTorqueMap(engineId: int):
     menuItems = [
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
-        {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Fuel map #1', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Fuel map #2', 'link': f'/fuelMap/{engineId}/2'},
         {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
         {'text': 'SSI distribution', 'link': f'/ssDistribution/{engineId}'},
     ]
@@ -504,7 +510,8 @@ def showSSDistribution(engineId: int):
     menuItems = [
         {'text': 'Engine details', 'link': f'/engine/{engineId}'},
         {'text': 'Trend monitoring', 'link': f'/trends/{engineId}'},
-        {'text': 'Fuel map', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Fuel map #1', 'link': f'/fuelMap/{engineId}'},
+        {'text': 'Fuel map #2', 'link': f'/fuelMap/{engineId}/2'},
         {'text': 'Torque map', 'link': f'/torqueMap/{engineId}'},
     ]
 
