@@ -402,6 +402,10 @@ def showTrends(engineId: int):
             val = None  # currently not defined
             yAxisLabels.append('Δ SPR [W]')
             yAxisRanges.append(None)
+        elif yKey == 'TQR':
+            val = None  # currently not defined
+            yAxisLabels.append('Δ TQR [Nm]')
+            yAxisRanges.append(None)
         else:
             raise NotImplementedError(f"Not implemented for yKey '{yKey}'!")
 
