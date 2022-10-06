@@ -325,7 +325,7 @@ def showChart(engineId: int, what: str, whatId: int):
 
 def renderNotEnufDataErr():
     return render_template('errorMsg.html',
-                           message="Not enuf data!<br><br>You need to gather at least 50 data points before this analysis starts making any sense.")
+                           message="Not enuf data!<br><br>You need to gather at least 50 flight hours before this analysis starts making any sense.")
 
 
 @app.route('/trends/<engineId>')
