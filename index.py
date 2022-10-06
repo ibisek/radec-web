@@ -403,7 +403,7 @@ def showTrends(engineId: int):
             yAxisLabels.append('Δ SPR [W]')
             yAxisRanges.append(None)
         elif yKey == 'TQR':
-            val = None  # currently not defined
+            val = None
             yAxisLabels.append('Δ TQR [Nm]')
             yAxisRanges.append(None)
         else:
